@@ -28,6 +28,16 @@ public class ConsumptionService {
 	//Consumption API type object
 	ConsumptionResource consumptionobj = new ConsumptionResource();
 	
+	
+	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public String readAllConsumption()
+	{
+		return consumptionobj.readConsumption();
+	}
+	
+	
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -75,13 +85,5 @@ public class ConsumptionService {
 		return consumptionobj.deleteConsumption(conID);
 	}
 	
-	
-	@GET
-	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
-	public String readAllConsumption()
-	{
-		return consumptionobj.readAllConsumption();
-	}
 	
 }

@@ -112,66 +112,60 @@ public class ConsumptionResource {
 		return output;
 	}
 	
-	public String readAllConsumption()
-	{
+	public String readConsumption(){
 		String output = "";
-		try
-		{
+		try{
 			Connection con = dbConnect.connect();
-			if (con == null)
-			{
-				return dbErrorMessage;
+			if (con == null){
+				return "Error while connecting to the database for reading."; 	
 			}
-			
-			// Displaying the read concepts
-			output = "<table border='1'><tr><th>Consumption ID</th>"
-			+"<th>User ID</th><th>Month</th><th>Previous Month Reading</th>"
-			+ "<th>Current Month Reading</th><th>Consumption units</th></tr>";
-			
-			// retrieving all the concept details
+			// Prepare the html table to be displayed
+			output = "<table border='1'><tr><th>Consumption ID</th><th>User ID</th>" +
+			"<th>Month</th>" +
+			"<th>Previous Month Reading</th>" +
+			"<th>Current Month Reading</th>" +
+			"<th>Consumption units</th>" +
+			"<th>Update</th><th>Remove</th></tr>";
 			String query = "select * from consumption";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			
-			// Iterate through the rows in the result set
-			while (rs.next())
-			{
+			// iterate through the rows in the result set
+			while (rs.next()){
 				String conID = Integer.toString(rs.getInt("conID"));
 				String userID = rs.getString("userID");
 				String month = rs.getString("month");
-				String premonread = Integer.toString(rs.getInt("premonread"));
-				String curmonread = rs.getString("curmonread");
-				String conunits = rs.getString("conunits");
-				
-			    
-				// Add a row into the HTML table
+				String premonread = Integer.toString(rs.getInt("preMonReading"));
+				String curmonread = Integer.toString(rs.getInt("curMonReading"));
+				String conunits = Integer.toString(rs.getInt("conUnits"));
+			
+				// Add into the html table
 				output += "<tr><td>" + conID + "</td>";
 				output += "<td>" + userID + "</td>";
 				output += "<td>" + month + "</td>";
 				output += "<td>" + premonread + "</td>";
 				output += "<td>" + curmonread + "</td>";
 				output += "<td>" + conunits + "</td>";
-				
-				// button for backing a concept
-				output += "<td><form method='post' action=''>"
-				+ "<input name='btnBacks' "
-				+ " type='submit' value='Back the project' class='btn btn-secondary'>"
-				+ "<input name='conID' type='hidden' "
-				+ " value=' " + conID + "'>"
-				+ "</form></td></tr>";
-				
-				}
-				con.close();
-				
-				// Completion of the HTML table
-				output += "</table>";
+			
+				// buttons
+				output += "<td><input name='btnUpdate' type='button' value='Update' class='btn btn-secondary'></td>" 
+				+ "<td><form method='post' action='items.jsp'>" 
+				+ "<input name='btnRemove' type='submit' value='Remove' class='btn btn-danger'>"
+				+ "<input name='conID' type='hidden' value='" + conID + "'>" + "</form></td></tr>";
 			}
-			catch (Exception e)
-			{
-				output = "Error while retrieving the consumptions!";
-				System.err.println(e.getMessage());
-			}
-			return output;
+			
+			con.close();
+			
+			// Complete the html table
+			output += "</table>";
+			
+		}catch (Exception e){
+			output = "Error while reading the items.";
+			System.err.println(e.getMessage());	
+		}
+			
+		return output;
+			
 	}
 	
 }
