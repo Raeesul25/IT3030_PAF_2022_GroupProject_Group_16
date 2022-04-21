@@ -13,7 +13,7 @@ public class ConsumptionResource {
 	DBConnection dbConnect = new DBConnection();
 	String dbErrorMessage = "Database Connection failed!!";
 	
-	public String insertConsumption(int conId, String userID, String month, int premonreading, int curmonreading, int conunits){
+	public String insertConsumption(String userID, String month, int premonreading, int curmonreading){
 		String output = "";
 	
 		try{
@@ -23,7 +23,7 @@ public class ConsumptionResource {
 				return "Error while connecting to the database for inserting."; 	
 			}
 			// create a prepared statement
-			String query = " insert into consumption('conID', 'userID', 'month', 'preMonReading', 'curMonReading', 'conUnits') VALUES (?, ?, ?, ?, ?, ?)";
+			String query = " insert into consumption(conID,userID,month,preMonReading,curMonReading,conUnits) VALUES (?, ?, ?, ?, ?)";
 			
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
@@ -32,6 +32,9 @@ public class ConsumptionResource {
 			preparedStmt.setString(3, month);
 			preparedStmt.setInt(4, premonreading);
 			preparedStmt.setInt(5, curmonreading);
+			
+			int conunits;
+			conunits = (curmonreading - premonreading);
 			preparedStmt.setInt(6, conunits);
 			
 			// execute the statement
@@ -48,7 +51,7 @@ public class ConsumptionResource {
 		
 	}
 	
-	public String updateConsumption(int conId, String userID, String month, int premonreading, int curmonreading, int conunits) {
+	public String updateConsumption(String conId, String userID, String month, String premonreading, String curmonreading, String conunits) {
 		
 		String output = "";
 		try{
@@ -65,10 +68,10 @@ public class ConsumptionResource {
 			// binding values
 			preparedStmt.setString(1, userID);
 			preparedStmt.setString(2, month);
-			preparedStmt.setInt(3, premonreading);
-			preparedStmt.setInt(4, curmonreading);
-			preparedStmt.setInt(5, (conunits));
-			preparedStmt.setInt(6, conId);
+			preparedStmt.setInt(3, Integer.parseInt(premonreading));
+			preparedStmt.setInt(4, Integer.parseInt(curmonreading));
+			preparedStmt.setInt(5, Integer.parseInt(conunits));
+			preparedStmt.setInt(6, Integer.parseInt(conId));
 		
 			// execute the statement
 			preparedStmt.execute();
@@ -84,7 +87,7 @@ public class ConsumptionResource {
 		return output;
 	}
 	
-	public String deleteConsumption(int conID){
+	public String deleteConsumption(String conID){
 		String output = "";
 		try{
 			
@@ -93,11 +96,11 @@ public class ConsumptionResource {
 				return "Error while connecting to the database for deleting."; 	
 			}
 			// create a prepared statement
-			String query = "DELETE FROM consumption  WHERE conID=?";
+			String query = "DELETE FROM consumption WHERE conID=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			
 			// binding values
-			preparedStmt.setInt(1, conID);
+			preparedStmt.setInt(1, Integer.parseInt(conID));
 			
 			// execute the statement
 			preparedStmt.execute();
@@ -125,7 +128,7 @@ public class ConsumptionResource {
 			"<th>Previous Month Reading</th>" +
 			"<th>Current Month Reading</th>" +
 			"<th>Consumption units</th>" +
-			"<th>Update</th><th>Remove</th></tr>";
+			"<th>Update</th></tr>";
 			String query = "select * from consumption";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -147,11 +150,14 @@ public class ConsumptionResource {
 				output += "<td>" + curmonread + "</td>";
 				output += "<td>" + conunits + "</td>";
 			
-				// buttons
-				output += "<td><input name='btnUpdate' type='button' value='Update' class='btn btn-secondary'></td>" 
-				+ "<td><form method='post' action='items.jsp'>" 
-				+ "<input name='btnRemove' type='submit' value='Remove' class='btn btn-danger'>"
-				+ "<input name='conID' type='hidden' value='" + conID + "'>" + "</form></td></tr>";
+				// button for backing a concept
+				output += "<td><form method='post' action=''>"
+				+ "<input name='btnBacks' "
+				+ " type='submit' value='Back the Consumption' class='btn btn-secondary'>"
+				+ "<input name='conID' type='hidden' "
+				+ " value=' " + conID + "'>"
+				+ "</form></td></tr>";
+
 			}
 			
 			con.close();

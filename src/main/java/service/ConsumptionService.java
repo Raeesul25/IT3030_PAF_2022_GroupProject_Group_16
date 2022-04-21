@@ -8,9 +8,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+//import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
 
 //import org.jsoup.Jsoup;
 //import org.jsoup.nodes.Document;
@@ -42,48 +46,54 @@ public class ConsumptionService {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String insertConsumption(@FormParam("conID") int conID,@FormParam("userID") String userID,
+	public String insertConsumption(@FormParam("userID") String userID, 
 			@FormParam("month") String month,@FormParam("premonread") int premonread,
-			@FormParam("curmonread") int curmonread, @FormParam("conunits") int conunits){
+			@FormParam("curmonread") int curmonread){
 	
-		String output = consumptionobj.insertConsumption(conID, userID, month, premonread, 
-				curmonread, conunits);
+		String output = consumptionobj.insertConsumption(userID, month, premonread, 
+				curmonread);
 	
 		return output;
 	}
 	
 	
 	@PUT
-	@Path("/update/{conID}")
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String updateConsumption(@PathParam ("conID") int conID, String consumptionData){
+	public String updateConsumption(String consumptionData){
 		
 		//Convert the input string to a JSON object
 		JsonObject consumptionobject = new JsonParser().parse(consumptionData).getAsJsonObject();
 	
 		//Read the values from the JSON object
+		String conID = consumptionobject.get("conID").getAsString();
 		String userID = consumptionobject.get("userID").getAsString();
 		String month = consumptionobject.get("month").getAsString();
-		int premonread = consumptionobject.get("premonread").getAsInt();
-		int curmonread = consumptionobject.get("curmonread").getAsInt();
-		int conunits = consumptionobject.get("conunits").getAsInt();
+		String premonread = consumptionobject.get("premonread").getAsString();
+		String curmonread = consumptionobject.get("curmonread").getAsString();
+		String conunits = consumptionobject.get("conunits").getAsString();
 		
-		String output = consumptionobj.updateConsumption(conID, userID, month, premonread, curmonread,
-				conunits);
+		String output = consumptionobj.updateConsumption(conID, userID, month, premonread, 
+				curmonread, conunits);
 	
 		return output;
 	}
 	
 	
 	@DELETE
-	@Path("/delete/{conID}/")
+	@Path("/")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String deleteConceptDetails(@PathParam ("conID") int conID)
+	public String deleteConceptDetails(String consumptionData)
 	{
-		//Calling the delete method and returning
-		return consumptionobj.deleteConsumption(conID);
+		//Convert the input string to an XML document
+		Document doc = Jsoup.parse(consumptionData, "", Parser.xmlParser());
+			
+		//Read the value from the element <conID>
+		String conID = doc.select("conID").text();
+		String output = consumptionobj.deleteConsumption(conID);
+			
+		return output;
 	}
-	
 	
 }
