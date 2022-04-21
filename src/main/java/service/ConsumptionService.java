@@ -1,12 +1,14 @@
 package service;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 //import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -26,13 +28,6 @@ public class ConsumptionService {
 	//Consumption API type object
 	ConsumptionResource consumptionobj = new ConsumptionResource();
 	
-	@GET
-	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
-	public String readConsumption(){
-		return consumptionobj.readConsumption();
-	}
-	
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -49,16 +44,15 @@ public class ConsumptionService {
 	
 	
 	@PUT
-	@Path("/")
+	@Path("/update/{conID}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String updateConsumption(String consumptionData){
+	public String updateConsumption(@PathParam ("conID") int conID, String consumptionData){
 		
 		//Convert the input string to a JSON object
 		JsonObject consumptionobject = new JsonParser().parse(consumptionData).getAsJsonObject();
 	
 		//Read the values from the JSON object
-		int conID = consumptionobject.get("conID").getAsInt();
 		String userID = consumptionobject.get("userID").getAsString();
 		String month = consumptionobject.get("month").getAsString();
 		int premonread = consumptionobject.get("premonread").getAsInt();
@@ -69,6 +63,25 @@ public class ConsumptionService {
 				conunits);
 	
 		return output;
+	}
+	
+	
+	@DELETE
+	@Path("/delete/{conID}/")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String deleteConceptDetails(@PathParam ("conID") int conID)
+	{
+		//Calling the delete method and returning
+		return consumptionobj.deleteConsumption(conID);
+	}
+	
+	
+	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	public String readAllConsumption()
+	{
+		return consumptionobj.readAllConsumption();
 	}
 	
 }

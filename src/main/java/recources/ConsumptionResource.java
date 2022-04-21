@@ -48,62 +48,6 @@ public class ConsumptionResource {
 		
 	}
 	
-	public String readConsumption(){
-		String output = "";
-		
-		try{
-			Connection con = dbConnect.connect();
-			if (con == null){
-				return "Error while connecting to the database for reading."; 	
-			}
-			// Prepare the html table to be displayed
-			output = "<table border='1'><tr><th>Consumption ID</th><th>User ID</th>" +
-			"<th>Month</th>" +
-			"<th>Previous Month Reading</th>" +
-			"<th>Current Month Reading</th><th>Consumption Units</th></tr>"+
-			"<th>Update</th><th>Remove</th></tr>";
-			String query = "select * from consumption";
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			
-			// iterate through the rows in the result set
-			while (rs.next()){
-				String conID = Integer.toString(rs.getInt("conID"));
-				String userID = rs.getString("userID");
-				String month = rs.getString("month");
-				String prevMonRead = Integer.toString(rs.getInt("preMonRead"));
-				String curMonRead = Integer.toString(rs.getInt("curMonRead"));
-				String conUnits = Integer.toString(rs.getInt("conUnits"));
-			
-				// Add into the html table
-				output += "<tr><td>" + conID + "</td>";
-				output += "<td>" + userID + "</td>";
-				output += "<td>" + month + "</td>";
-				output += "<td>" + prevMonRead + "</td>";
-				output += "<td>" + curMonRead + "</td>";
-				output += "<td>" + conUnits + "</td>";
-			
-				// buttons
-				output += "<td><input name='btnUpdate' type='button' value='Update' class='btn btn-secondary'></td>" 
-				+ "<td><form method='post' action='items.jsp'>" 
-				+ "<input name='btnRemove' type='submit' value='Remove' class='btn btn-danger'>"
-				+ "<input name='itemID' type='hidden' value='" + conID + "'>" + "</form></td></tr>";
-			}
-			
-			con.close();
-			
-			// Complete the html table
-			output += "</table>";
-			
-		}catch (Exception e){
-			output = "Error while reading the consumptions.";
-			System.err.println(e.getMessage());	
-		}
-			
-		return output;
-		
-	}
-	
 	public String updateConsumption(int conId, String userID, String month, int premonreading, int curmonreading, int conunits) {
 		
 		String output = "";
@@ -185,7 +129,7 @@ public class ConsumptionResource {
 			+ "<th>Current Month Reading</th><th>Consumption units</th></tr>";
 			
 			// retrieving all the concept details
-			String query = "select * from consumption ";
+			String query = "select * from consumption";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			
@@ -212,7 +156,7 @@ public class ConsumptionResource {
 				output += "<td><form method='post' action=''>"
 				+ "<input name='btnBacks' "
 				+ " type='submit' value='Back the project' class='btn btn-secondary'>"
-				+ "<input name='conceptID' type='hidden' "
+				+ "<input name='conID' type='hidden' "
 				+ " value=' " + conID + "'>"
 				+ "</form></td></tr>";
 				
