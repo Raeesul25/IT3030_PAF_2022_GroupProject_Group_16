@@ -31,7 +31,7 @@ public class Billing_Resource {
 		
 		try {
 			
-			con = dbConnect.connect();
+			con = dbConnect.connectBill();
 			pst = con.prepareStatement("SELECT * FROM electrogrid.billing");
 			//b WHERE b.bill_ID = ?
 			//pst.setString(1, UIDConverted);
@@ -70,7 +70,7 @@ public class Billing_Resource {
 		String output = "";
 		
 		try{
-			Connection con = dbConnect.connect();
+			Connection con = dbConnect.connectBill();
 			if (con == null){
 				return "Error while connecting to the database for reading."; 	
 			}
@@ -80,32 +80,39 @@ public class Billing_Resource {
 			"<th>Address</th>" +
 			"<th>Month </th> <th>Bill Amount</th> <th>Monthly Units</th> <th>Rate per Unit</th></tr>"+
 			"<th>Update</th><th>Remove</th></tr>";
-			String query = "select * from consumption";
+			String query = "select * from electrogrid.billing";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			
 			// iterate through the rows in the result set
 			while (rs.next()){
-				String conID = Integer.toString(rs.getInt("conID"));
-				String userID = rs.getString("userID");
+				String bill_ID = Integer.toString(rs.getInt("bill_ID"));
+				String power_consumption_ID = rs.getString("power_consumption_ID");
+				String User_Name = rs.getString("User_Name");
+				String NIC = rs.getString("NIC");
+				String address = rs.getString("address");
 				String month = rs.getString("month");
-				String prevMonRead = Integer.toString(rs.getInt("preMonRead"));
-				String curMonRead = Integer.toString(rs.getInt("curMonRead"));
-				String conUnits = Integer.toString(rs.getInt("conUnits"));
+				
+				String amount = Double.toString(rs.getDouble("amount"));
+				String monthly_units = Integer.toString(rs.getInt("monthly_units"));
+				String rate = Integer.toString(rs.getInt("rate"));
 			
 				// Add into the html table
-				output += "<tr><td>" + conID + "</td>";
-				output += "<td>" + userID + "</td>";
+				output += "<tr><td>" + bill_ID + "</td>";
+				output += "<td>" + power_consumption_ID + "</td>";
+				output += "<td>" + User_Name + "</td>";
+				output += "<td>" + NIC + "</td>";
+				output += "<td>" + address + "</td>";
 				output += "<td>" + month + "</td>";
-				output += "<td>" + prevMonRead + "</td>";
-				output += "<td>" + curMonRead + "</td>";
-				output += "<td>" + conUnits + "</td>";
+				output += "<td>" + amount + "</td>";
+				output += "<td>" + monthly_units + "</td>";
+				output += "<td>" + rate + "</td>";
 			
 				// buttons
 				output += "<td><input name='btnUpdate' type='button' value='Update' class='btn btn-secondary'></td>" 
 				+ "<td><form method='post' action='items.jsp'>" 
 				+ "<input name='btnRemove' type='submit' value='Remove' class='btn btn-danger'>"
-				+ "<input name='itemID' type='hidden' value='" + conID + "'>" + "</form></td></tr>";
+				+ "<input name='itemID' type='hidden' value='" + bill_ID + "'>" + "</form></td></tr>";
 			}
 			
 			con.close();
@@ -114,7 +121,7 @@ public class Billing_Resource {
 			output += "</table>";
 			
 		}catch (Exception e){
-			output = "Error while reading the consumptions.";
+			output = "Error while reading the Bill Records.";
 			System.err.println(e.getMessage());	
 		}
 			
@@ -133,7 +140,7 @@ public class Billing_Resource {
 	
 		try{
 
-			Connection con = dbConnect.connect();
+			Connection con = dbConnect.connectBill();
 			if (con == null){
 				return "Error while connecting to the database for inserting."; 	
 			}
@@ -159,10 +166,10 @@ public class Billing_Resource {
 			// execute the statement
 			preparedStmt.execute();
 			con.close();
-			output = "Consumption Inserted successfully";
+			output = "New Bill Record inserted successfully";
 			
 		}catch (Exception e){
-			output = "Error while inserting the consumption.";
+			output = "Error while inserting the New Bill Record.";
 			System.err.println(e.getMessage());
 		}
 			
@@ -170,12 +177,12 @@ public class Billing_Resource {
 		
 	}
 	
-	public String updateConsumption(String conId, String userID, String month, String premonreading, String curmonreading, String conunits) {
+	public String updateConsumption(String power_consumption_ID, String User_Name, String NIC, String address, String month, String amount, String monthly_units, String rate) {
 		
 		String output = "";
 		try{
 			
-			Connection con = dbConnect.connect();
+			Connection con = dbConnect.connectBill();
 			if (con == null){
 				return "Error while connecting to the database for updating."; 	
 			}
@@ -196,10 +203,10 @@ public class Billing_Resource {
 			preparedStmt.execute();
 		
 			con.close();
-			output = "Consumption Details Updated successfully";
+			output = "Bill Record updated successfully";
 		
 		}catch (Exception e){
-			output = "Error while updating the consumption.";
+			output = "Error while updating the Bill Record.";
 			System.err.println(e.getMessage());
 		}
 		
@@ -210,7 +217,7 @@ public class Billing_Resource {
 		String output = "";
 		try{
 			
-			Connection con = dbConnect.connect();
+			Connection con = dbConnect.connectBill();
 			if (con == null){
 				return "Error while connecting to the database for deleting."; 	
 			}
@@ -225,9 +232,9 @@ public class Billing_Resource {
 			preparedStmt.execute();
 
 			con.close();
-			output = "Consumption Deleted successfully";
+			output = "Bill Record deleted successfully";
 		}catch (Exception e){
-			output = "Error while deleting the Consumption.";
+			output = "Error while deleting the Bill Record.";
 			System.err.println(e.getMessage());
 		}
 		
