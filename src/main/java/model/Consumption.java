@@ -71,7 +71,7 @@ public class Consumption {
 
 
 	public int getConUnits() {
-		conUnits = (curMonReading - preMonReading);
+//		conUnits = (curMonReading - preMonReading);
 		return conUnits;
 	}
 
