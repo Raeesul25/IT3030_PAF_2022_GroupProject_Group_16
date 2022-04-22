@@ -70,7 +70,7 @@ public class Billing_Resource {
 		String output = "";
 		
 		try{
-			Connection con = dbConnect.connectBill();
+			Connection con = dbConnect.connectRoot();
 			if (con == null){
 				return "Error while connecting to the database for reading."; 	
 			}
@@ -80,7 +80,7 @@ public class Billing_Resource {
 			"<th>Address</th>" +
 			"<th>Month </th> <th>Bill Amount</th> <th>Monthly Units</th> <th>Rate per Unit</th></tr>"+
 			"<th>Update</th><th>Remove</th></tr>";
-			String query = "select * from electrogrid.billing";
+			String query = "select * from billing";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			
@@ -130,7 +130,7 @@ public class Billing_Resource {
 	}
 	
 	
-	
+
 	
 	// INSERT
 	
@@ -140,7 +140,7 @@ public class Billing_Resource {
 	
 		try{
 
-			Connection con = dbConnect.connectBill();
+			Connection con = dbConnect.connectRoot();
 			if (con == null){
 				return "Error while connecting to the database for inserting."; 	
 			}
@@ -177,27 +177,33 @@ public class Billing_Resource {
 		
 	}
 	
-	public String updateConsumption(String power_consumption_ID, String User_Name, String NIC, String address, String month, String amount, String monthly_units, String rate) {
+	
+	
+	public String updateBill(String bill_ID, String power_consumption_ID, String User_Name, String NIC, String address, String month, String amount, String monthly_units, String rate) {
 		
 		String output = "";
 		try{
 			
-			Connection con = dbConnect.connectBill();
+			Connection con = dbConnect.connectRoot();
 			if (con == null){
 				return "Error while connecting to the database for updating."; 	
 			}
 		
 			// create a prepared statement
-			String query = "UPDATE consumption SET userID=?, month=?, preMonReading=?, curMonReading=?, conUnits=? WHERE conID=?";
+			String query = "UPDATE electrogrid.billing SET power_consumption_ID=?, User_Name=?, NIC=?, address=?, month=? amount=?, monthly_units=?, rate=? WHERE bill_ID=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 		
 			// binding values
-			preparedStmt.setString(1, userID);
-			preparedStmt.setString(2, month);
-			preparedStmt.setInt(3, Integer.parseInt(premonreading));
-			preparedStmt.setInt(4, Integer.parseInt(curmonreading));
-			preparedStmt.setInt(5, Integer.parseInt(conunits));
-			preparedStmt.setInt(6, Integer.parseInt(conId));
+			preparedStmt.setInt(1, Integer.parseInt(bill_ID));
+			preparedStmt.setInt(2, Integer.parseInt(power_consumption_ID));
+			preparedStmt.setString(3, User_Name);
+			preparedStmt.setString(4, NIC);
+			preparedStmt.setString(5, address);
+			preparedStmt.setString(6, month);
+			preparedStmt.setDouble(7, Double.parseDouble(amount));
+			preparedStmt.setInt(8, Integer.parseInt(monthly_units));
+			preparedStmt.setInt(9, Integer.parseInt(rate));
+			//preparedStmt.setInt(10, Integer.parseInt(bill_ID));
 		
 			// execute the statement
 			preparedStmt.execute();
@@ -213,20 +219,20 @@ public class Billing_Resource {
 		return output;
 	}
 	
-	public String deleteConsumption(String conID){
+	public String deleteBill(String bill_ID){
 		String output = "";
 		try{
 			
-			Connection con = dbConnect.connectBill();
+			Connection con = dbConnect.connectRoot();
 			if (con == null){
 				return "Error while connecting to the database for deleting."; 	
 			}
 			// create a prepared statement
-			String query = "DELETE FROM consumption WHERE conID=?";
+			String query = "DELETE FROM billing WHERE bill_ID=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			
 			// binding values
-			preparedStmt.setInt(1, Integer.parseInt(conID));
+			preparedStmt.setInt(1, Integer.parseInt(bill_ID));
 			
 			// execute the statement
 			preparedStmt.execute();
