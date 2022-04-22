@@ -22,7 +22,7 @@ public class Billing_Resource {
 	
 	// 	RETRIEVE
 	
-	public static List<Billing_Entity> viewBills(){
+	public static List<Billing_Entity> viewBill(){
 		
 		PreparedStatement pst = null;
 		ResultSet resultSet = null;
@@ -32,7 +32,8 @@ public class Billing_Resource {
 		try {
 			
 			con = dbConnect.connect();
-			pst = con.prepareStatement("SELECT * FROM electrogrid.billing b WHERE b.bill_ID = ?");
+			pst = con.prepareStatement("SELECT * FROM electrogrid.billing");
+			//b WHERE b.bill_ID = ?
 			//pst.setString(1, UIDConverted);
 			resultSet = pst.executeQuery();
 			
@@ -64,6 +65,110 @@ public class Billing_Resource {
 	} // end of RETRIEVE
 	
 	
+	// INSERT
+	
+	public String insertBill(String power_consumption_ID, String User_Name, String NIC, String address, String month, String amount, String monthly_units, String rate){
+		
+		String output = "";
+	
+		try{
+
+			Connection con = dbConnect.connect();
+			if (con == null){
+				return "Error while connecting to the database for inserting."; 	
+			}
+			// create a prepared statement
+			String query = " insert into consumption(conID,userID,month,preMonReading,curMonReading,conUnits) VALUES (?, ?, ?, ?, ?, ?)";
+			
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+			// binding values
+			preparedStmt.setInt(1, 0);
+			preparedStmt.setString(2, userID);
+			preparedStmt.setString(3, month);
+			preparedStmt.setInt(4, Integer.parseInt(premonreading));
+			preparedStmt.setInt(5, Integer.parseInt(curmonreading));
+			
+			int conunits;
+			conunits = (Integer.valueOf(curmonreading) - Integer.valueOf(premonreading));
+			preparedStmt.setInt(6, conunits);
+			
+			// execute the statement
+			preparedStmt.execute();
+			con.close();
+			output = "Consumption Inserted successfully";
+			
+		}catch (Exception e){
+			output = "Error while inserting the consumption.";
+			System.err.println(e.getMessage());
+		}
+			
+		return output;
+		
+	}
+	
+	public String updateConsumption(String conId, String userID, String month, String premonreading, String curmonreading, String conunits) {
+		
+		String output = "";
+		try{
+			
+			Connection con = dbConnect.connect();
+			if (con == null){
+				return "Error while connecting to the database for updating."; 	
+			}
+		
+			// create a prepared statement
+			String query = "UPDATE consumption SET userID=?, month=?, preMonReading=?, curMonReading=?, conUnits=? WHERE conID=?";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+		
+			// binding values
+			preparedStmt.setString(1, userID);
+			preparedStmt.setString(2, month);
+			preparedStmt.setInt(3, Integer.parseInt(premonreading));
+			preparedStmt.setInt(4, Integer.parseInt(curmonreading));
+			preparedStmt.setInt(5, Integer.parseInt(conunits));
+			preparedStmt.setInt(6, Integer.parseInt(conId));
+		
+			// execute the statement
+			preparedStmt.execute();
+		
+			con.close();
+			output = "Consumption Details Updated successfully";
+		
+		}catch (Exception e){
+			output = "Error while updating the consumption.";
+			System.err.println(e.getMessage());
+		}
+		
+		return output;
+	}
+	
+	public String deleteConsumption(String conID){
+		String output = "";
+		try{
+			
+			Connection con = dbConnect.connect();
+			if (con == null){
+				return "Error while connecting to the database for deleting."; 	
+			}
+			// create a prepared statement
+			String query = "DELETE FROM consumption WHERE conID=?";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+			
+			// binding values
+			preparedStmt.setInt(1, Integer.parseInt(conID));
+			
+			// execute the statement
+			preparedStmt.execute();
+
+			con.close();
+			output = "Consumption Deleted successfully";
+		}catch (Exception e){
+			output = "Error while deleting the Consumption.";
+			System.err.println(e.getMessage());
+		}
+		
+		return output;
+	}
 	
 	
 	
