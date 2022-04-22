@@ -7,7 +7,7 @@ public class Billing_Entity {
 	private int bill_ID;
 	private int power_consumption_ID;
 	private String User_Name;
-	private int NIC;
+	private String NIC;
 	private String address;
 	private String month;
 	private double amount;
@@ -17,7 +17,7 @@ public class Billing_Entity {
 	
 	// Constructor
 	
-	public Billing_Entity(int bill_ID, int power_consumption_ID, String user_Name, int nIC, String address,
+	public Billing_Entity(int bill_ID, int power_consumption_ID, String user_Name, String nIC, String address,
 			String month, double amount, int monthly_units, int rate) {
 		super();
 		this.bill_ID = bill_ID;
@@ -50,7 +50,7 @@ public class Billing_Entity {
 	public String getUser_Name() {
 		return User_Name;
 	}
-	public int getNIC() {
+	public String getNIC() {
 		return NIC;
 	}
 	public String getAddress() {
@@ -81,7 +81,7 @@ public class Billing_Entity {
 	public void setUser_Name(String user_Name) {
 		User_Name = user_Name;
 	}
-	public void setNIC(int nIC) {
+	public void setNIC(String nIC) {
 		NIC = nIC;
 	}
 	public void setAddress(String address) {
