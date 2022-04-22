@@ -13,7 +13,7 @@ public class ConsumptionResource {
 	DBConnection dbConnect = new DBConnection();
 	String dbErrorMessage = "Database Connection failed!!";
 	
-	public String insertConsumption(String userID, String month, int premonreading, int curmonreading){
+	public String insertConsumption(String userID, String month, String premonreading, String curmonreading){
 		String output = "";
 	
 		try{
@@ -23,24 +23,24 @@ public class ConsumptionResource {
 				return "Error while connecting to the database for inserting."; 	
 			}
 			// create a prepared statement
-			String query = " insert into consumption(conID,userID,month,preMonReading,curMonReading,conUnits) VALUES (?, ?, ?, ?, ?)";
+			String query = " insert into consumption(conID,userID,month,preMonReading,curMonReading,conUnits) VALUES (?, ?, ?, ?, ?, ?)";
 			
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
 			preparedStmt.setInt(1, 0);
 			preparedStmt.setString(2, userID);
 			preparedStmt.setString(3, month);
-			preparedStmt.setInt(4, premonreading);
-			preparedStmt.setInt(5, curmonreading);
+			preparedStmt.setInt(4, Integer.parseInt(premonreading));
+			preparedStmt.setInt(5, Integer.parseInt(curmonreading));
 			
 			int conunits;
-			conunits = (curmonreading - premonreading);
+			conunits = (Integer.valueOf(curmonreading) - Integer.valueOf(premonreading));
 			preparedStmt.setInt(6, conunits);
 			
 			// execute the statement
 			preparedStmt.execute();
 			con.close();
-			output = "Inserted successfully";
+			output = "Consumption Inserted successfully";
 			
 		}catch (Exception e){
 			output = "Error while inserting the consumption.";
@@ -62,7 +62,7 @@ public class ConsumptionResource {
 			}
 		
 			// create a prepared statement
-			String query = "UPDATE consumption SET  userID=?, month=?, preMonReading=?, curMonReading=?, conUnits=?, WHERE conID=?";
+			String query = "UPDATE consumption SET userID=?, month=?, preMonReading=?, curMonReading=?, conUnits=? WHERE conID=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 		
 			// binding values
@@ -77,7 +77,7 @@ public class ConsumptionResource {
 			preparedStmt.execute();
 		
 			con.close();
-			output = "Updated successfully";
+			output = "Consumption Details Updated successfully";
 		
 		}catch (Exception e){
 			output = "Error while updating the consumption.";
@@ -106,7 +106,7 @@ public class ConsumptionResource {
 			preparedStmt.execute();
 
 			con.close();
-			output = "Deleted successfully";
+			output = "Consumption Deleted successfully";
 		}catch (Exception e){
 			output = "Error while deleting the Consumption.";
 			System.err.println(e.getMessage());
