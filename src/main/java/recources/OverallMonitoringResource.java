@@ -19,7 +19,7 @@ public class OverallMonitoringResource {
 	
 		try{
 
-			Connection con = dbConnect.connect();
+			Connection con = dbConnect.connectRoot();
 			if (con == null){
 				return "Error while connecting to the database for inserting."; 	
 			}
@@ -55,7 +55,7 @@ public class OverallMonitoringResource {
 		String output = "";
 		
 		try{
-			Connection con = dbConnect.connect();
+			Connection con = dbConnect.connectRoot();
 			if (con == null){
 				return "Error while connecting to the database for reading."; 	
 			}
@@ -115,7 +115,7 @@ public class OverallMonitoringResource {
 		String output = "";
 		try{
 			
-			Connection con = dbConnect.connect();
+			Connection con = dbConnect.connectRoot();
 			if (con == null){
 				return "Error while connecting to the database for updating."; 	
 			}
@@ -152,7 +152,7 @@ public class OverallMonitoringResource {
 		String output = "";
 		try{
 			
-			Connection con = dbConnect.connect();
+			Connection con = dbConnect.connectRoot();
 			if (con == null){
 				return "Error while connecting to the database for deleting."; 	
 			}
