@@ -12,6 +12,7 @@ public class Consumption {
 	private int curMonReading;
 	private int conUnits;
 	private ArrayList<Consumption> summary;
+	// Test Comment
 	
 	
 	public Consumption() {
