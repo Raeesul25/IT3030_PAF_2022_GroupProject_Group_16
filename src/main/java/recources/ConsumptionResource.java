@@ -27,7 +27,7 @@ public class ConsumptionResource {
 			
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
-			preparedStmt.setInt(1, 0);
+			preparedStmt.setInt(1, 1);
 			preparedStmt.setString(2, userID);
 			preparedStmt.setString(3, month);
 			preparedStmt.setInt(4, Integer.parseInt(premonreading));
@@ -128,7 +128,7 @@ public class ConsumptionResource {
 			"<th>Previous Month Reading</th>" +
 			"<th>Current Month Reading</th>" +
 			"<th>Consumption units</th>" +
-			"<th>Update</th></tr>";
+			"<th>Update</th><th>Delete</th></tr>";
 			String query = "select * from consumption";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -150,13 +150,21 @@ public class ConsumptionResource {
 				output += "<td>" + curmonread + "</td>";
 				output += "<td>" + conunits + "</td>";
 			
-				// button for backing a concept
+				// button for updating a consumption
 				output += "<td><form method='post' action=''>"
-				+ "<input name='btnBacks' "
-				+ " type='submit' value='Back the Consumption' class='btn btn-secondary'>"
+				+ "<input name='btnUpdate' "
+				+ " type='submit' value='Update' class='btn btn-secondary'>"
 				+ "<input name='conID' type='hidden' "
 				+ " value=' " + conID + "'>"
-				+ "</form></td></tr>";
+				+ "</form></td>";
+				
+				// button for deleting a consumption
+				output += "<td><form method='post' action=''>"
+						+ "<input name='btnDelete' "
+						+ " type='submit' value='Delete' class='btn btn-secondary'>"
+						+ "<input name='conID' type='hidden' "
+						+ " value=' " + conID + "'>"
+						+ "</form></td>";
 
 			}
 			
@@ -172,6 +180,70 @@ public class ConsumptionResource {
 			
 		return output;
 			
+	}
+	
+	public String readSpecificUserConsumption(String userID)
+	{
+		String output = "";
+		try
+		{
+			Connection con = dbConnect.connect();
+			if (con == null)
+			{
+				return "Error while connecting to the database for reading.";
+			}
+			
+			// Displaying the read concepts
+			output = "<table border='1'><tr><th>Consumption ID</th>"
+			+"<th>Month</th>"
+			+ "<th>Previous Month Reading</th>"
+			+ "<th>Current Month Reading</th>"
+			+ "<th>Consumption Units</th>"
+			+ "<th>Update</th></tr>";
+			
+			// Retrieving the concepts launched by a particular researcher
+			String query = "select conID, month, preMonReading, curMonReading, conUnits from consumption where userID = '"+userID+"' ";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			
+			
+			// iterate through the rows in the result set
+			while (rs.next())
+			{
+				String conID = Integer.toString(rs.getInt("conID"));
+				String month = rs.getString("month");
+				String premonread = Integer.toString(rs.getInt("preMonReading"));
+				String curmonread = Integer.toString(rs.getInt("curMonReading"));
+				String conunits = Integer.toString(rs.getInt("conUnits"));
+				
+				
+				// Add a row into the HTML table
+				output += "<tr><td>" + conID + "</td>";
+				output += "<td>" + month + "</td>";
+				output += "<td>" + premonread + "</td>";
+				output += "<td>" + curmonread + "</td>";
+				output += "<td>" + conunits + "</td>";
+				
+				// button for updating a consumption
+				output += "<td><form method='post' action=''>"
+				+ "<input name='btnUpdate' "
+				+ " type='submit' value='Update' class='btn btn-secondary'>"
+				+ "<input name='conID' type='hidden' "
+				+ " value=' " + conID + "'>"
+				+ "</form></td></tr>";
+				
+				}
+				con.close();
+				
+				// Completion of the HTML table
+				output += "</table>";
+			}
+			catch (Exception e)
+			{
+				output = "Error while retrieving user consumption details!!";
+				System.out.println(e.getMessage());
+			}
+			return output;
 	}
 	
 }
