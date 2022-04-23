@@ -1,6 +1,7 @@
 package service;
 
 import javax.ws.rs.Consumes;
+
 import javax.ws.rs.DELETE;
 //import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -17,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import recources.ConsumptionResource;
+
 
 //start of service
 @Path("/Consumptions")

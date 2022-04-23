@@ -14,29 +14,44 @@ public class PaymentResources {
 	
 		
 		//Insert new payment details to the table
-		public String insertPayment(String userID,String billID, String total_amount, String paid_amount, String month,String payment_type,String card_no){
+		public String insertPayment(String userID,String billID,  String paid_amount,String payment_type,String card_no){
 			
 			String output = "";
-		
+			String month =null;
+			Double total_amount =null;
+			int bill_ID=(Integer) null;
+
 			try{
 
 				Connection con = dbConnect.connect();
 				if (con == null){
 					return "Error while connecting to the database for inserting."; 	
 				}
-				// create a prepared statement
-				String query = " insert into payment(paymentID,userID,billID,total_amount,paid_amount,balance,month,paid_Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		
 				
+				//get month of bill
+				String query2 = "SELECT month,amount from billing where bill_ID = '"+ billID+"'";
+				Statement Stmt = con.createStatement();
+				ResultSet rs = Stmt.executeQuery(query2);
+				
+				while (rs.next()) {
+					month = rs.getString(1);
+					total_amount=rs.getDouble(2);
+					System.out.println(month);
+				}
+				
+				// create a prepared statement
+				String query = " insert into payment(paymentID,userID,billID,total_amount,paid_amount,balance,month,payment_type,card_no,paid_Date) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?)";						
 				PreparedStatement preparedStmt = con.prepareStatement(query);
-				// binding values
+				
+				// binding values for payment table
 				preparedStmt.setInt(1, 0);
 				preparedStmt.setString(2, userID);
 				preparedStmt.setInt(3, Integer.parseInt(billID));
-				preparedStmt.setDouble(4, Double.parseDouble(total_amount));
+				preparedStmt.setDouble(4, total_amount);
 				preparedStmt.setDouble(5, Double.parseDouble(paid_amount));
 				
-				double balance = Double.parseDouble(total_amount) - Double.parseDouble(paid_amount);
+				//get balance (if user paid more than the total amount balance will be a positive value) 
+				double balance = total_amount - Double.parseDouble(paid_amount);
 				preparedStmt.setDouble(6, balance);
 				preparedStmt.setString(7, month);
 				preparedStmt.setString(8, payment_type);
@@ -45,13 +60,14 @@ public class PaymentResources {
 				//get current date
 				long currentDate=System.currentTimeMillis();  
 				java.sql.Date paid_Date=new java.sql.Date(currentDate);
-				preparedStmt.setString(8, paid_Date.toString());
+				preparedStmt.setString(10, paid_Date.toString());
 				
 				
 				// execute the statement
 				preparedStmt.execute();
 				con.close();
 				output = "Payment Inserted successfully"; //Successful message when inserting payment
+				
 				
 			}catch (Exception e){
 				output = "Error while inserting the Payment to the table.";
@@ -62,10 +78,17 @@ public class PaymentResources {
 			
 		}
 		
+		
 		//Update payment details
-		public String updatePayment(String paymentID,String userID,String billID, String total_amount, String p_amount,String obalance, String month,String old_paid_Date,String payment_type,String card_no,String new_paid) {
+		public String updatePayment(String paymentID,String billID, String payment_type,String card_no,String new_paid) {
 			
 			String output = "";
+			Double balance = 0.00;
+			
+			//get current date
+			long currentDate=System.currentTimeMillis();  
+			java.sql.Date paid_Date=new java.sql.Date(currentDate);
+			
 			try{
 				
 				Connection con = dbConnect.connect();
@@ -75,34 +98,43 @@ public class PaymentResources {
 				
 	
 				// create a update statement
-				String query = "UPDATE payment SET  paid_amount=?, balance=?, paid_Date=?, curMonReading=?, conUnits=?, WHERE paymentID=?";
-				PreparedStatement preparedStmt = con.prepareStatement(query);
+				//String query ="Update payment set paid_amount='"+Double.parseDouble(new_paid)+"',balance='"+balance+"',paid_Date='"+ paid_Date+"',payment_type='"+payment_type 
+					//	+"',card_no='"+ card_no+"where billID='"+Integer.parseInt(billID)+"'";
+				
+				Double pp=Double.parseDouble(new_paid);
+				int bb =Integer.parseInt(billID);
+				System.out.println("Hiiiiii");
+				System.out.println(pp+ " "+bb);
+				String query ="Update payment set paid_amount='"+pp+" where billID ='"+bb+"'";
+				
+				Statement Stmt = con.createStatement();
+				Stmt.execute(query);
 			
-				// binding values
-				preparedStmt.setInt(1, Integer.parseInt(paymentID));
-				preparedStmt.setString(2, userID);
-				preparedStmt.setInt(3, Integer.parseInt(billID));
-				preparedStmt.setDouble(4, Double.parseDouble(total_amount));
-				
-				double paid_amount =Double.parseDouble(p_amount);
-				paid_amount=paid_amount + Double.parseDouble(new_paid);
-				preparedStmt.setDouble(5, (paid_amount));
-				
-				double balance =Double.parseDouble(obalance);
-				balance = balance - Double.parseDouble(new_paid);
-				preparedStmt.setDouble(6, balance);
-				preparedStmt.setString(7, month);
-				preparedStmt.setString(8, payment_type);
-				preparedStmt.setString(9, card_no);
-
-				
-				//get current date
-				long currentDate=System.currentTimeMillis();  
-				java.sql.Date paid_Date=new java.sql.Date(currentDate);
-				preparedStmt.setString(10, paid_Date.toString());
-			
-				// execute the statement
-				preparedStmt.execute();
+//				// binding values
+//				preparedStmt.setInt(1, Integer.parseInt(paymentID));
+//				//preparedStmt.setString(2, userID);
+//				//preparedStmt.setString(2, "C0002");
+//				preparedStmt.setInt(3, Integer.parseInt(billID));
+//				//preparedStmt.setDouble(4, Double.parseDouble(total_amount));
+//				preparedStmt.setDouble(4, 1000.00);
+//				
+//				double paid_amount =500;//Double.parseDouble(p_amount);
+//				paid_amount=paid_amount + Double.parseDouble(new_paid);
+//				preparedStmt.setDouble(5, (paid_amount));
+//				
+//				double balance =500;//Double.parseDouble(obalance);
+//				balance = balance - Double.parseDouble(new_paid);
+//				preparedStmt.setDouble(6, balance);
+//				String month ="March-2022";
+//				preparedStmt.setString(7, month);
+//				preparedStmt.setString(8, payment_type);
+//				preparedStmt.setString(9, card_no);
+//
+//			
+//				preparedStmt.setString(10, paid_Date.toString());
+//			
+//				// execute the statement
+//				preparedStmt.execute();
 			
 				con.close();
 				output = "Payment updated successfully";
@@ -115,10 +147,9 @@ public class PaymentResources {
 			return output;
 		}
 		
-		//Delete payment
-		public String deletePayment(String paymentID){
+		//Delete payment by payment id
+		public String deletepayment(String paymentID){
 			String output = "";
-			
 			try{
 				
 				Connection con = dbConnect.connect();
@@ -126,128 +157,24 @@ public class PaymentResources {
 					return "Error while connecting to the database for deleting."; 	
 				}
 				// create a prepared statement
-				String query = "DELETE FROM payment WHERE paymentID=?";
-				PreparedStatement preparedStmt = con.prepareStatement(query);
-				
-				// binding values
-				preparedStmt.setInt(1, Integer.parseInt(paymentID));
+				String query = "DELETE FROM payment WHERE paymentID='"+paymentID+"'";
+				Statement preparedStmt = con.createStatement();
 				
 				// execute the statement
-				preparedStmt.execute();
+				preparedStmt.execute(query);
 
 				con.close();
-				output = "Payment Record deleted successfully";
+				output = "Payment record Deleted successfully";
 			}catch (Exception e){
-				output = "Error while deleting the payment.";
+				output = "Error while deleting the payment record.";
 				System.err.println(e.getMessage());
 			}
 			
 			return output;
 		}
 		
-		//get one payment
-		public ArrayList<model.Payment> read_one_payment(int paymentID){
 
-			//store details of the user in a ArrayList			
-			ArrayList<model.Payment> payment = new ArrayList<>();
-			
-			try{
-				Connection con = dbConnect.connect();
-				if (con == null){
-					System.err.println("Error while connecting to the database for reading.");
-					return null;
-				}
-				
-				
-				//statement to get data from payment table
-				String query1 ="SELECT * from shop where paymentID = '"+ paymentID+"'";
-			
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery(query1);
-				
-				// get details from table
-				
-					int pID = rs.getInt(1);
-					String userID = rs.getString(2);
-					int billID = rs.getInt(3);
-					double total_amount = rs.getDouble(4);
-					double paid_amount = rs.getDouble(5);
-					double balance = rs.getDouble(6);
-					String month = rs.getString(7);
-					String payment_type = rs.getString(8);
-					String card_no = rs.getString(9);
-					String paid_Date = rs.getString(10);
-
-					
-					//create object from Payment class
-					model.Payment p1 = new Payment(pID, userID, billID, total_amount, paid_amount, balance, month,payment_type,card_no, paid_Date);//new Payment(pID,userID,billID,total_amount,paid_amount,balance,month,paid_Date);
-					
-					//add details of payment to arraylist
-					payment.add(p1);
-				
-				
-				con.close();
-				
-				
-			}catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-				
-			return payment;
-			
-		}
-	/*	
-		public ArrayList<model.> read_one_payment(int paymentID){
-
-			//store details of the user in a ArrayList			
-			ArrayList<model.Payment> payment = new ArrayList<>();
-			
-			try{
-				Connection con = dbConnect.connect();
-				if (con == null){
-					System.err.println("Error while connecting to the database for reading.");
-					return null;
-				}
-				
-				
-				//statement to get data from payment table
-				String query1 ="SELECT * from shop where paymentID = '"+ paymentID+"'";
-			
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery(query1);
-				
-				// get details from table
-				
-					int pID = rs.getInt(1);
-					String userID = rs.getString(2);
-					int billID = rs.getInt(3);
-					double total_amount = rs.getDouble(4);
-					double paid_amount = rs.getDouble(5);
-					double balance = rs.getDouble(6);
-					String month = rs.getString(7);
-					String paid_Date = rs.getString(8);
-
-					
-					//create object from Payment class
-					model.Payment p1 = new Payment(pID, userID, billID, total_amount, paid_amount, balance, month, paid_Date);//new Payment(pID,userID,billID,total_amount,paid_amount,balance,month,paid_Date);
-					
-					//add details of payment to arraylist
-					payment.add(p1);
-				
-				
-				con.close();
-				
-				
-			}catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-				
-			return payment;
-			
-		}
-		*/
+	
 		
 		//get all payment details based on the user id
 		public String readPayment(){
@@ -322,6 +249,84 @@ public class PaymentResources {
 				
 			return output;
 			
+		}
+		
+		//read one specific user's payment details
+		public String readOneUserPayment(String user_ID)
+		{
+			String output = "";
+			try
+			{
+				Connection con = dbConnect.connect();
+				if (con == null)
+				{
+					return "Error while connecting to the database for reading.";
+				}
+				
+				// Displaying the read concepts
+				output = "<table border='1'><tr><th>Payment ID</th>" +
+						"<th>Bill ID</th>" +
+						"<th>Toatl Amount</th>" +
+						"<th>Paid Amount</th>" +
+						"<th>Balance</th>" +
+						"<th>Month</th>" +
+						"<th>Payment Type</th>" +
+						"<th>Card no.</th>" +
+						"<th>Paid Date</th>" +
+						"<th>Update</th><th>Delete</th></tr>";
+				
+				// Retrieving the concepts launched by a particular researcher
+				String query ="SELECT * from payment where userID = '"+ user_ID+"'";
+				Statement createStmt = con.createStatement();
+				
+				ResultSet rs = createStmt.executeQuery(query);
+				
+				// iterate through the rows in the result set
+				while (rs.next())
+				{
+					String payment_ID = Integer.toString(rs.getInt("paymentID"));
+					String userID = rs.getString("userID");
+					String billID = rs.getString("billID");
+					String total_amount = Double.toString(rs.getDouble("total_amount"));
+					String paid_amount = Double.toString(rs.getDouble("paid_amount"));
+					String balance = Double.toString(rs.getDouble("balance"));
+					String month =rs.getString("month");
+					String payment_type =rs.getString("payment_type");
+					String card_no =rs.getString("card_no");
+					String paid_Date =rs.getString("paid_Date");
+				
+					// Add into the html table
+					output += "<tr><td>" + payment_ID + "</td>";
+					output += "<td>" + billID + "</td>";
+					output += "<td>" + total_amount + "</td>";
+					output += "<td>" + paid_amount + "</td>";
+					output += "<td>" + balance + "</td>";
+					output += "<td>" + month + "</td>";
+					output += "<td>" + payment_type + "</td>";
+					output += "<td>" + card_no + "</td>";
+					output += "<td>" + paid_Date + "</td>";
+				
+					// button for backing a concept
+					 output += "<td><input name='btnUpdate' " 
+					 + " type='button' value='Update'></td>"
+					 + "<td><form method='post' action=''>"
+					 + "<input name='btnRemove' " 
+					 + " type='submit' value='Delete'>"
+					 + "<input name='userID' type='hidden' " 
+					 + " value='" + userID + "'>" + "</form></td></tr>"; 
+					 } 
+
+				con.close();
+				
+				// Complete the html table
+				output += "</table>";
+				}
+				catch (Exception e)
+				{
+					output ="Error while retrieving payment details!!";
+					System.out.println(e.getMessage());
+				}
+				return output;
 		}
 	
 }
