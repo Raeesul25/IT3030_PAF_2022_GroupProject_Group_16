@@ -14,7 +14,7 @@ public class OverallMonitoringResource {
 	String dbErrorMessage = "Database Connection failed!!";
 	
 	//Insert
-	public String insertOverallMonitoring(int monitoring_ID, int pay_ID, int power_consumption_ID, String month, int units, double balance, String comment){
+	public String insertOverallMonitoring(String pay_ID, String power_consumption_ID, String month, String comment){
 		String output = "";
 	
 		try{
@@ -23,19 +23,51 @@ public class OverallMonitoringResource {
 			if (con == null){
 				return "Error while connecting to the database for inserting."; 	
 			}
+			
+			//double query2 = Double.valueOf("SELECT SUM(balance) FROM payment WHERE month='"+month+"'");
+			String query2 = "SELECT SUM(balance) as totalBalance FROM payment WHERE month='"+month+"'";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query2);
+			
+			String balance = rs.getString("totalBalance");
+			double totbalance = Double.valueOf(balance);
+			
+			//int query3 = Integer. valueOf("SELECT SUM(units) FROM consumption WHERE month='"+month+"'");
+			String query3 = "SELECT SUM(units) as totalUnits FROM consumption WHERE month='"+month+"'";
+			//Statement stmt1 = con.createStatement();
+			ResultSet rs1 = stmt.executeQuery(query3);
+			
+			int units = Integer. valueOf(rs1.getString("totalUnits"));
+			
+			
 			// create a prepared statement
 			//String query = " insert into monitoring('monitoring_ID', 'pay_ID', 'power_consumption_ID', 'month', 'units', 'comment') VALUES (?, ?, ?, ?, ?, ?, ?)";
 			String query = " insert into monitoring(monitoring_ID, pay_ID, power_consumption_ID, month, units, balance, comment) VALUES (?, ?, ?, ?, ?, ?, ?)";
 			
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
-			preparedStmt.setInt(1, 0);
-			preparedStmt.setInt(2, pay_ID);
-			preparedStmt.setInt(3, power_consumption_ID);
+			preparedStmt.setInt(1, 10);
+			preparedStmt.setInt(2, Integer.parseInt(pay_ID));
+			preparedStmt.setInt(3, Integer.parseInt(power_consumption_ID));
 			preparedStmt.setString(4, month);
+			//preparedStmt.setInt(5, 678);
 			preparedStmt.setInt(5, units);
-			preparedStmt.setDouble(6, balance);
+			//preparedStmt.setDouble(6, 569);
+			preparedStmt.setDouble(6, totbalance);
 			preparedStmt.setString(7, comment);
+			
+			
+			//Double balance1 = parseDouble(preparedStmt.setString(6, query2));
+			
+					
+			
+//			double  tot_amount;
+//			tot_amount = (Integer.valueOf(monthly_units) * Integer.valueOf(rate));
+//			preparedStmt.setDouble(9, tot_amount);
+			
+			//String query = "select bill_ID, power_consumption_ID, User_Name, NIC, address, b.month, monthly_units, rate, amount 
+			//from billing b, consumption c 
+			//WHERE b.power_consumption_ID = c.conID AND c.userID ='"+userID+"' ";
 			
 			// execute the statement
 			preparedStmt.execute();
@@ -50,7 +82,7 @@ public class OverallMonitoringResource {
 		return output;
 		
 	}
-	
+
 	//read
 	public String readOverallMonitoring(){
 		String output = "";
