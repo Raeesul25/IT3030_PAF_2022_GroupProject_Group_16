@@ -148,7 +148,7 @@ public class OverallMonitoringResource {
 	}
 	
 	//Delete
-	public String deleteConsumption(int monitoring_ID){
+	public String deleteMonitoring(String monitoring_ID){
 		String output = "";
 		try{
 			
@@ -161,7 +161,7 @@ public class OverallMonitoringResource {
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			
 			// binding values
-			preparedStmt.setInt(1, monitoring_ID);
+			preparedStmt.setString(1, monitoring_ID);
 			
 			// execute the statement
 			preparedStmt.execute();
