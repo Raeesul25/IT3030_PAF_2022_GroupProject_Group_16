@@ -38,7 +38,7 @@ public class PaymentService {
 	
 	
 	@POST
-	@Path("/")
+	@Path("/insert")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String insertConsumption(@FormParam("userID") String userID, 

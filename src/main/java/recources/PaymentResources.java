@@ -81,6 +81,48 @@ public class PaymentResources {
 		public String updatePayment(String payID,String billID, String payment_type,String card_no,String new_paid) {
 			
 			String output = "";
+			int paymentID = Integer.parseInt(payID);
+			//get current date
+			long currentDate=System.currentTimeMillis();  
+			java.sql.Date paid_Date=new java.sql.Date(currentDate);
+			
+			try{
+				
+				Connection con = dbConnect.connect();
+				if (con == null){
+					return "Error while connecting to the database for updating."; 	
+				}
+				
+				//get old paid amount and balance
+				String q1 = "SELECT * from payment where paymentID = '"+ paymentID +"'";
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(q1);
+				rs.next();
+				
+				double opaid =Double.parseDouble(rs.getString(5));
+				double obalance =Double.parseDouble(rs.getString(6));
+
+				System.out.println(opaid+" "+obalance);
+				
+				
+				double paid_amount =opaid + Double.parseDouble(new_paid) ;
+				double balance =obalance + Double.parseDouble(new_paid) ;
+				
+				// create a update statement
+				String query ="Update payment set paid_amount='"+paid_amount+"',balance='"+balance+"',paid_Date='"+ paid_Date+"',payment_type='"+payment_type 
+						+"',card_no='"+ card_no+"'"+"where paymentID='"+paymentID+"'";
+				
+				//create statement
+				Statement st = con.createStatement();
+				st.executeUpdate(query);
+			
+				con.close();
+				output = "Payment updated successfully";
+			
+			}catch (Exception e){
+				output = "Error while updating the payment.";
+				System.err.println(e.getMessage());
+			}
 			
 			return output;
 		}
