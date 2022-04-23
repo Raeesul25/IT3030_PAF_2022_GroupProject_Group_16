@@ -3,6 +3,7 @@ package recources;
 import java.sql.*;
 import java.util.ArrayList;
 
+import model.Billing_Entity;
 import model.Payment;
 import util.DBConnection;
 
@@ -16,11 +17,8 @@ public class PaymentResources {
 		//Insert new payment details to the table
 		public String insertPayment(String userID,String billID,  String paid_amount,String payment_type,String card_no){
 			
-			String output = "";
-			String month =null;
-			Double total_amount =null;
-			int bill_ID=(Integer) null;
-
+			String output = "";		
+			int bill_ID = Integer.parseInt(billID);
 			try{
 
 				Connection con = dbConnect.connect();
@@ -28,16 +26,16 @@ public class PaymentResources {
 					return "Error while connecting to the database for inserting."; 	
 				}
 				
-				//get month of bill
-				String query2 = "SELECT month,amount from billing where bill_ID = '"+ billID+"'";
-				Statement Stmt = con.createStatement();
-				ResultSet rs = Stmt.executeQuery(query2);
+				//get month and amount of bill
+				String q1 = "SELECT * from billing where bill_ID = '"+ bill_ID +"'";
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(q1);
+				rs.next();
 				
-				while (rs.next()) {
-					month = rs.getString(1);
-					total_amount=rs.getDouble(2);
-					System.out.println(month);
-				}
+				String month =rs.getString(6);
+				String total_amount =rs.getString(9);
+
+				System.out.println(month+" "+total_amount);
 				
 				// create a prepared statement
 				String query = " insert into payment(paymentID,userID,billID,total_amount,paid_amount,balance,month,payment_type,card_no,paid_Date) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?)";						
@@ -47,11 +45,11 @@ public class PaymentResources {
 				preparedStmt.setInt(1, 0);
 				preparedStmt.setString(2, userID);
 				preparedStmt.setInt(3, Integer.parseInt(billID));
-				preparedStmt.setDouble(4, total_amount);
+				preparedStmt.setDouble(4, Double.parseDouble(total_amount));
 				preparedStmt.setDouble(5, Double.parseDouble(paid_amount));
 				
-				//get balance (if user paid more than the total amount balance will be a positive value) 
-				double balance = total_amount - Double.parseDouble(paid_amount);
+				//get balance (if user paid less than the total amount, balance will be a negative value) 
+				double balance =  Double.parseDouble(paid_amount) - Double.parseDouble(total_amount);
 				preparedStmt.setDouble(6, balance);
 				preparedStmt.setString(7, month);
 				preparedStmt.setString(8, payment_type);
@@ -80,69 +78,9 @@ public class PaymentResources {
 		
 		
 		//Update payment details
-		public String updatePayment(String paymentID,String billID, String payment_type,String card_no,String new_paid) {
+		public String updatePayment(String payID,String billID, String payment_type,String card_no,String new_paid) {
 			
 			String output = "";
-			Double balance = 0.00;
-			
-			//get current date
-			long currentDate=System.currentTimeMillis();  
-			java.sql.Date paid_Date=new java.sql.Date(currentDate);
-			
-			try{
-				
-				Connection con = dbConnect.connect();
-				if (con == null){
-					return "Error while connecting to the database for updating."; 	
-				}
-				
-	
-				// create a update statement
-				//String query ="Update payment set paid_amount='"+Double.parseDouble(new_paid)+"',balance='"+balance+"',paid_Date='"+ paid_Date+"',payment_type='"+payment_type 
-					//	+"',card_no='"+ card_no+"where billID='"+Integer.parseInt(billID)+"'";
-				
-				Double pp=Double.parseDouble(new_paid);
-				int bb =Integer.parseInt(billID);
-				System.out.println("Hiiiiii");
-				System.out.println(pp+ " "+bb);
-				String query ="Update payment set paid_amount='"+pp+" where billID ='"+bb+"'";
-				
-				Statement Stmt = con.createStatement();
-				Stmt.execute(query);
-			
-//				// binding values
-//				preparedStmt.setInt(1, Integer.parseInt(paymentID));
-//				//preparedStmt.setString(2, userID);
-//				//preparedStmt.setString(2, "C0002");
-//				preparedStmt.setInt(3, Integer.parseInt(billID));
-//				//preparedStmt.setDouble(4, Double.parseDouble(total_amount));
-//				preparedStmt.setDouble(4, 1000.00);
-//				
-//				double paid_amount =500;//Double.parseDouble(p_amount);
-//				paid_amount=paid_amount + Double.parseDouble(new_paid);
-//				preparedStmt.setDouble(5, (paid_amount));
-//				
-//				double balance =500;//Double.parseDouble(obalance);
-//				balance = balance - Double.parseDouble(new_paid);
-//				preparedStmt.setDouble(6, balance);
-//				String month ="March-2022";
-//				preparedStmt.setString(7, month);
-//				preparedStmt.setString(8, payment_type);
-//				preparedStmt.setString(9, card_no);
-//
-//			
-//				preparedStmt.setString(10, paid_Date.toString());
-//			
-//				// execute the statement
-//				preparedStmt.execute();
-			
-				con.close();
-				output = "Payment updated successfully";
-			
-			}catch (Exception e){
-				output = "Error while updating the payment.";
-				System.err.println(e.getMessage());
-			}
 			
 			return output;
 		}
@@ -328,5 +266,7 @@ public class PaymentResources {
 				}
 				return output;
 		}
+		
+		
 	
 }
