@@ -81,9 +81,9 @@ public class OverallMonitoringService {
 	}	
 	
 	@GET
-	@Path("/{givenDate}")
+	@Path("/{month}")
 	@Produces(MediaType.TEXT_HTML)
-	public String readSpecificUserConsumption(@PathParam("month") String month)
+	public String readSpecificMonitoring(@PathParam("month") String month)
 	{
 		return monitoringobj.readSpecificMonitoring(month);
 	}

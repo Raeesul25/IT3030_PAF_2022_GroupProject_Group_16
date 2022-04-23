@@ -183,7 +183,7 @@ public class OverallMonitoringResource {
 		String output = "";
 		try
 		{
-			Connection con = dbConnect.connect();
+			Connection con = dbConnect.connectRoot();
 			if (con == null)
 			{
 				return "Error while connecting to the database for reading.";
@@ -200,7 +200,7 @@ public class OverallMonitoringResource {
 			
 			// Retrieving the concepts launched by a particular researcher
 			//int monitoring_ID, int pay_ID, int power_consumption_ID, String month, int units, double balance, String comment
-			String query = "select monitoring_ID, pay_ID, power_consumption_ID, month, units, balance, comment from consumption where userID = '"+givenDate+"' ";
+			String query = "select monitoring_ID, pay_ID, power_consumption_ID, month, units, balance, comment from monitoring where month = '"+givenDate+"' ";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			
@@ -242,7 +242,7 @@ public class OverallMonitoringResource {
 			}
 			catch (Exception e)
 			{
-				output = "Error while retrieving user consumption details!!";
+				output = "Error while retrieving overall Monitoring details!!";
 				System.out.println(e.getMessage());
 			}
 			return output;
