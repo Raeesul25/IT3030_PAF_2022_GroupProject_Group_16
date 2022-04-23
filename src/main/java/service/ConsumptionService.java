@@ -82,4 +82,13 @@ public class ConsumptionService {
 		return consumptionobj.deleteConsumption(conID);
 	}
 	
+
+	@GET
+	@Path("/{userID}")
+	@Produces(MediaType.TEXT_HTML)
+	public String readSpecificUserConsumption(@PathParam("userID") String userID)
+	{
+		return consumptionobj.readSpecificUserConsumption(userID);
+	}
+	
 }

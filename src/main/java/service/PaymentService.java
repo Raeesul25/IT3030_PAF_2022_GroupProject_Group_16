@@ -1,6 +1,8 @@
 package service;
 
+import javax.websocket.server.PathParam;
 import javax.ws.rs.Consumes;
+
 
 
 import javax.ws.rs.DELETE;
@@ -15,9 +17,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 
-//import org.jsoup.Jsoup;
-//import org.jsoup.nodes.Document;
-//import org.jsoup.parser.Parser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -25,7 +27,7 @@ import com.google.gson.JsonParser;
 import recources.PaymentResources;
 
 //start of service
-@Path("/Paymnets")
+@Path("/Payments")
 public class PaymentService {
 	
 	//Payment API type object
@@ -35,9 +37,9 @@ public class PaymentService {
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
-	public String readAllConsumption(@FormParam("userID") String userID)
+	public String readAllPayment()
 	{
-		return Paymnetsobj.readPayment(userID);
+		return Paymnetsobj.readPayment();
 	}
 	
 	
@@ -47,9 +49,9 @@ public class PaymentService {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String insertConsumption(@FormParam("userID") String userID, 
 			@FormParam("billID") String billID, @FormParam("total_amount") String total_amount,
-			@FormParam("paid_amount") String paid_amount,@FormParam("month") String month){
+			@FormParam("paid_amount") String paid_amount,@FormParam("month") String month,@FormParam("payment_type") String payment_type,@FormParam("card_no") String card_no){
 	
-		String output = Paymnetsobj.insertPayment(userID,billID, total_amount, paid_amount, month);
+		String output = Paymnetsobj.insertPayment(userID,billID, total_amount, paid_amount, month,payment_type,card_no);
 	
 		return output;
 	}
@@ -59,7 +61,7 @@ public class PaymentService {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String updateConsumption(String consumptionData){
+	public String updatePayment(String consumptionData){
 		
 		//Convert the input string to a JSON object
 		JsonObject consumptionobject = new JsonParser().parse(consumptionData).getAsJsonObject();
@@ -74,26 +76,21 @@ public class PaymentService {
 		String month = consumptionobject.get("month").getAsString();
 		String old_paid_Date = consumptionobject.get("old_paid_Date").getAsString();
 		String new_paid = consumptionobject.get("new_paid").getAsString();
+		String payment_type = consumptionobject.get("payment_type").getAsString();
+		String card_no = consumptionobject.get("card_no").getAsString();
 		
-		String output = Paymnetsobj.updatePayment(paymentID,userID,billID, total_amount, p_amount,obalance, month,old_paid_Date,new_paid);
+		String output = Paymnetsobj.updatePayment(paymentID,userID,billID, total_amount, p_amount,obalance, month,old_paid_Date,new_paid,payment_type,card_no);
 	
 		return output;
 	}
 	
 	
 	@DELETE
-	@Path("/")
+	@Path("/delete/{paymentID}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String deleteConceptDetails(String paymentData)
+	public String deletePaymentRecord(@PathParam ("paymentID") String paymentID)
 	{
-		//Convert the input string to an XML document
-		//Document doc = Jsoup.parse(paymentData, "", Parser.xmlParser());
-			
-		//Read the value from the element <conID>
-		//String paymentID = doc.select("paymentID").text();
-		//String output = Paymnetsobj.deletePayment(paymentID);
-			
-		return null;//output;
+		return Paymnetsobj.deletePayment(paymentID);
 	}
 
 }

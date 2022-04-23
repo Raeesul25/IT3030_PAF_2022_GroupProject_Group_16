@@ -14,7 +14,7 @@ public class PaymentResources {
 	
 		
 		//Insert new payment details to the table
-		public String insertPayment(String userID,String billID, String total_amount, String paid_amount, String month){
+		public String insertPayment(String userID,String billID, String total_amount, String paid_amount, String month,String payment_type,String card_no){
 			
 			String output = "";
 		
@@ -39,6 +39,8 @@ public class PaymentResources {
 				double balance = Double.parseDouble(total_amount) - Double.parseDouble(paid_amount);
 				preparedStmt.setDouble(6, balance);
 				preparedStmt.setString(7, month);
+				preparedStmt.setString(8, payment_type);
+				preparedStmt.setString(9, card_no);
 				
 				//get current date
 				long currentDate=System.currentTimeMillis();  
@@ -61,7 +63,7 @@ public class PaymentResources {
 		}
 		
 		//Update payment details
-		public String updatePayment(String paymentID,String userID,String billID, String total_amount, String p_amount,String obalance, String month,String old_paid_Date,String new_paid) {
+		public String updatePayment(String paymentID,String userID,String billID, String total_amount, String p_amount,String obalance, String month,String old_paid_Date,String payment_type,String card_no,String new_paid) {
 			
 			String output = "";
 			try{
@@ -90,11 +92,14 @@ public class PaymentResources {
 				balance = balance - Double.parseDouble(new_paid);
 				preparedStmt.setDouble(6, balance);
 				preparedStmt.setString(7, month);
+				preparedStmt.setString(8, payment_type);
+				preparedStmt.setString(9, card_no);
+
 				
 				//get current date
 				long currentDate=System.currentTimeMillis();  
 				java.sql.Date paid_Date=new java.sql.Date(currentDate);
-				preparedStmt.setString(8, paid_Date.toString());
+				preparedStmt.setString(10, paid_Date.toString());
 			
 				// execute the statement
 				preparedStmt.execute();
@@ -113,6 +118,7 @@ public class PaymentResources {
 		//Delete payment
 		public String deletePayment(String paymentID){
 			String output = "";
+			
 			try{
 				
 				Connection con = dbConnect.connect();
@@ -130,7 +136,7 @@ public class PaymentResources {
 				preparedStmt.execute();
 
 				con.close();
-				output = "Deleted successfully";
+				output = "Payment Record deleted successfully";
 			}catch (Exception e){
 				output = "Error while deleting the payment.";
 				System.err.println(e.getMessage());
@@ -168,11 +174,13 @@ public class PaymentResources {
 					double paid_amount = rs.getDouble(5);
 					double balance = rs.getDouble(6);
 					String month = rs.getString(7);
-					String paid_Date = rs.getString(8);
+					String payment_type = rs.getString(8);
+					String card_no = rs.getString(9);
+					String paid_Date = rs.getString(10);
 
 					
 					//create object from Payment class
-					model.Payment p1 = new Payment(pID, userID, billID, total_amount, paid_amount, balance, month, paid_Date);//new Payment(pID,userID,billID,total_amount,paid_amount,balance,month,paid_Date);
+					model.Payment p1 = new Payment(pID, userID, billID, total_amount, paid_amount, balance, month,payment_type,card_no, paid_Date);//new Payment(pID,userID,billID,total_amount,paid_amount,balance,month,paid_Date);
 					
 					//add details of payment to arraylist
 					payment.add(p1);
@@ -242,7 +250,7 @@ public class PaymentResources {
 		*/
 		
 		//get all payment details based on the user id
-		public String readPayment(String u_ID){
+		public String readPayment(){
 			String output = "";
 			try{
 				Connection con = dbConnect.connect();
@@ -256,13 +264,15 @@ public class PaymentResources {
 				"<th>Paid Amount</th>" +
 				"<th>Balance</th>" +
 				"<th>Month</th>" +
+				"<th>Payment Type</th>" +
+				"<th>Card no.</th>" +
 				"<th>Paid Date</th>" +
 				"<th>Update</th><th>Delete</th></tr>";
 				
-				String query = "select * from payment WHERE userID=?";
+				String query = "select * from payment ";//WHERE userID=?";
 				PreparedStatement preparedStmt = con.prepareStatement(query);
 				// binding values
-				preparedStmt.setString(2,u_ID);
+				//preparedStmt.setString(2,u_ID);
 				ResultSet rs = preparedStmt.executeQuery(query);
 				
 				// iterate through the rows in the result set
@@ -274,6 +284,8 @@ public class PaymentResources {
 					String paid_amount = Double.toString(rs.getDouble("paid_amount"));
 					String balance = Double.toString(rs.getDouble("balance"));
 					String month =rs.getString("month");
+					String payment_type =rs.getString("payment_type");
+					String card_no =rs.getString("card_no");
 					String paid_Date =rs.getString("paid_Date");
 				
 					// Add into the html table
@@ -284,6 +296,8 @@ public class PaymentResources {
 					output += "<td>" + paid_amount + "</td>";
 					output += "<td>" + balance + "</td>";
 					output += "<td>" + month + "</td>";
+					output += "<td>" + payment_type + "</td>";
+					output += "<td>" + card_no + "</td>";
 					output += "<td>" + paid_Date + "</td>";
 				
 					// button for backing a concept
