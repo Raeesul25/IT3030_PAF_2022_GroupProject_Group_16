@@ -34,8 +34,7 @@ public class Billing_Resource {
 			output = "<table border='1'><tr><th>Bill ID</th><th>Consumption ID</th><th>User Name</th>" +
 			"<th>NIC</th>" +
 			"<th>Address</th>" +
-			"<th>Month </th> <th>Monthly Units</th> <th>Rate per Unit</th> <th>Bill Amount</th> </tr>"+
-			"<th>Update</th><th>Remove</th></tr>";
+			"<th>Month </th> <th>Monthly Units</th> <th>Rate per Unit</th> <th>Bill Amount</th> </tr>";
 			
 			String query = "select * from billing";
 			
@@ -87,7 +86,7 @@ public class Billing_Resource {
 	}
 	
 	
-	// VIEW SINGLE USER BILL
+	// Retrieve SINGLE USER BILL
 	
 	public String viewBill(String userID)
 	{
@@ -104,12 +103,11 @@ public class Billing_Resource {
 			output = "<table border='1'><tr><th>Bill ID</th><th>Consumption ID</th><th>User Name</th>" +
 					"<th>NIC</th>" +
 					"<th>Address</th>" +
-					"<th>Month </th> <th>Monthly Units</th> <th>Rate per Unit</th> <th>Bill Amount</th> </tr>"+
-					"<th>Update</th><th>Remove</th></tr>";
+					"<th>Month </th> <th>Monthly Units</th> <th>Rate per Unit</th> <th>Bill Amount</th> </tr>";
 			
 			
 			// Retrieving a single bill for a user
-			String query = "select bill_ID, power_consumption_ID, User_Name, NIC, address, month, monthly_units, rate, amount  from billing  where userID = '"+userID+"' ";
+			String query = "select bill_ID, power_consumption_ID, User_Name, NIC, address, b.month, monthly_units, rate, amount  from billing b, consumption c WHERE b.power_consumption_ID = c.conID AND c.userID ='"+userID+"' ";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			
@@ -117,26 +115,33 @@ public class Billing_Resource {
 			// iterate through the rows in the result set
 			while (rs.next())
 			{
-				String conID = Integer.toString(rs.getInt("conID"));
+				String bill_ID = Integer.toString(rs.getInt("bill_ID"));
+				String power_consumption_ID = rs.getString("power_consumption_ID");
+				String User_Name = rs.getString("User_Name");
+				String NIC = rs.getString("NIC");
+				String address = rs.getString("address");
 				String month = rs.getString("month");
-				String premonread = Integer.toString(rs.getInt("preMonReading"));
-				String curmonread = Integer.toString(rs.getInt("curMonReading"));
-				String conunits = Integer.toString(rs.getInt("conUnits"));
-				
-				
-				// Add a row into the HTML table
-				output += "<tr><td>" + conID + "</td>";
+				String monthly_units = Integer.toString(rs.getInt("monthly_units"));
+				String rate = Integer.toString(rs.getInt("rate"));
+				String amount = Double.toString(rs.getDouble("amount"));
+			
+				// Add into the html table
+				output += "<tr><td>" + bill_ID + "</td>";
+				output += "<td>" + power_consumption_ID + "</td>";
+				output += "<td>" + User_Name + "</td>";
+				output += "<td>" + NIC + "</td>";
+				output += "<td>" + address + "</td>";
 				output += "<td>" + month + "</td>";
-				output += "<td>" + premonread + "</td>";
-				output += "<td>" + curmonread + "</td>";
-				output += "<td>" + conunits + "</td>";
+				output += "<td>" + monthly_units + "</td>";
+				output += "<td>" + rate + "</td>";
+				output += "<td>" + amount + "</td>";
 				
 				// button for updating a consumption
 				output += "<td><form method='post' action=''>"
 				+ "<input name='btnUpdate' "
 				+ " type='submit' value='Update' class='btn btn-secondary'>"
-				+ "<input name='conID' type='hidden' "
-				+ " value=' " + conID + "'>"
+				+ "<input name='bill_ID' type='hidden' "
+				+ " value=' " + bill_ID + "'>"
 				+ "</form></td></tr>";
 				
 				}
@@ -147,7 +152,7 @@ public class Billing_Resource {
 			}
 			catch (Exception e)
 			{
-				output = "Error while retrieving user consumption details!!";
+				output = "Error while retrieving single bill details!!";
 				System.out.println(e.getMessage());
 			}
 			return output;
@@ -203,6 +208,42 @@ public class Billing_Resource {
 	
 	// UPDATE
 	
+	public String updateBill(String bill_ID, String rate) {
+		
+		String output = "";
+		try{
+			
+			Connection con = dbConnect.connectRoot();
+			if (con == null){
+				return "Error while connecting to the database for updating."; 	
+			}
+		
+			// create a prepared statement
+			String query = "UPDATE electrogrid.billing SET rate=? WHERE bill_ID=?";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+		
+			// binding values
+			preparedStmt.setInt(1, Integer.parseInt(rate));			
+			preparedStmt.setInt(2, Integer.parseInt(bill_ID));
+			
+		
+			// execute the statement
+			preparedStmt.execute();
+		
+			con.close();
+			output = "Bill Record updated successfully";
+		
+		}catch (Exception e){
+			output = "Error while updating the Bill Record.";
+			System.err.println(e.getMessage());
+		}
+		
+		return output;
+	}
+	
+	
+	
+	/*
 	public String updateBill(String bill_ID, String power_consumption_ID, String User_Name, String NIC, String address, String month, String monthly_units, String rate, String amount) {
 		
 		String output = "";
@@ -242,6 +283,9 @@ public class Billing_Resource {
 		
 		return output;
 	}
+	*/
+	
+	
 	
 	// DELETE
 	

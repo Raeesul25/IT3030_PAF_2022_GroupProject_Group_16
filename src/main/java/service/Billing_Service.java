@@ -1,7 +1,5 @@
 package service;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -16,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import model.Billing_Entity;
 import recources.Billing_Resource;
 
 
@@ -34,6 +31,17 @@ public class Billing_Service {
 		
 		return objectBill.viewAllBills();
 	}
+	
+	// View single bill
+	
+	@GET
+	@Path("/{userID}")
+	@Produces(MediaType.TEXT_HTML)
+	public String viewBill(@PathParam("userID") String userID)
+	{
+		return objectBill.viewBill(userID);
+	}
+	
 
 	
 	@POST
@@ -49,30 +57,26 @@ public class Billing_Service {
 		return output;
 	}
 	
-	/*
+	
 	@PUT
-	@Path("/update/{conID}")
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String updateConsumption(@PathParam ("conID") String conID, String consumptionData){
+	public String updateBill(String billData){
 		
 		//Convert the input string to a JSON object
-		JsonObject consumptionobject = new JsonParser().parse(consumptionData).getAsJsonObject();
+		JsonObject objectBillData = new JsonParser().parse(billData).getAsJsonObject();
 	
 		//Read the values from the JSON object
-//		String conID = consumptionobject.get("conID").getAsString();
-		String userID = consumptionobject.get("userID").getAsString();
-		String month = consumptionobject.get("month").getAsString();
-		String premonread = consumptionobject.get("premonread").getAsString();
-		String curmonread = consumptionobject.get("curmonread").getAsString();
-		String conunits = consumptionobject.get("conunits").getAsString();
+
+		String bill_ID = objectBillData.get("bill_ID").getAsString();
+		String rate = objectBillData.get("rate").getAsString();
 		
-		String output = objectBill.updateConsumption(conID, userID, month, premonread, 
-				curmonread, conunits);
+		String output = objectBill.updateBill(bill_ID, rate);
 	
 		return output;
 	}
-	*/
+	
 	
 	//   "/{name}"
 	@DELETE
@@ -83,14 +87,6 @@ public class Billing_Service {
 		return objectBill.deleteBill(bill_ID);
 	}
 	
-	// View single bill
-	/*
-	@GET
-	@Path("/{userID}")
-	@Produces(MediaType.TEXT_HTML)
-	public String readSpecificUserConsumption(@PathParam("userID") String userID)
-	{
-		return consumptionobj.readSpecificUserConsumption(userID);
-	}
-	*/
+
+	
 }
