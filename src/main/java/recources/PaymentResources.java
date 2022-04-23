@@ -1,15 +1,16 @@
 package recources;
 
 import java.sql.*;
+
 import java.util.ArrayList;
 
-import model.Billing_Entity;
 import model.Payment;
 import util.DBConnection;
 
+
 public class PaymentResources {
 
-	//DBConnection object to connect to database
+		//DBConnection object to connect to database
 		DBConnection dbConnect = new DBConnection();
 		String dbErrorMessage = "Database Connection failed!!";
 	
