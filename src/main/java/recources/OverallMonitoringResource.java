@@ -28,16 +28,25 @@ public class OverallMonitoringResource {
 			String query2 = "SELECT SUM(balance) as totalBalance FROM payment WHERE month='"+month+"'";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query2);
+			rs.next();
+			String balance = rs.getString(1);
+			System.out.println(balance);
 			
-			String balance = rs.getString("totalBalance");
+			//String balance = rs.getString("totalBalance");
+			
 			double totbalance = Double.valueOf(balance);
+			System.out.println(totbalance);
 			
 			//int query3 = Integer. valueOf("SELECT SUM(units) FROM consumption WHERE month='"+month+"'");
-			String query3 = "SELECT SUM(units) as totalUnits FROM consumption WHERE month='"+month+"'";
-			//Statement stmt1 = con.createStatement();
-			ResultSet rs1 = stmt.executeQuery(query3);
+			String query3 = "SELECT SUM(conUnits) as totalUnits FROM consumption WHERE month='"+month+"'";
+			Statement stmt1 = con.createStatement();
+			ResultSet rs1 = stmt1.executeQuery(query3);
+			rs1.next();
+			String units = rs1.getString(1);
+			System.out.println(units);
 			
-			int units = Integer. valueOf(rs1.getString("totalUnits"));
+			int totunits = Integer.valueOf(units);
+			System.out.println(totunits);
 			
 			
 			// create a prepared statement
@@ -51,7 +60,7 @@ public class OverallMonitoringResource {
 			preparedStmt.setInt(3, Integer.parseInt(power_consumption_ID));
 			preparedStmt.setString(4, month);
 			//preparedStmt.setInt(5, 678);
-			preparedStmt.setInt(5, units);
+			preparedStmt.setInt(5, totunits);
 			//preparedStmt.setDouble(6, 569);
 			preparedStmt.setDouble(6, totbalance);
 			preparedStmt.setString(7, comment);
