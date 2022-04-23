@@ -23,7 +23,6 @@ public class DBConnection {
 		return con;
 	}
 	
-	// Billing
 	
 	public Connection connectRoot()
 	{
