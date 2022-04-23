@@ -14,7 +14,7 @@ public class OverallMonitoringResource {
 	String dbErrorMessage = "Database Connection failed!!";
 	
 	//Insert
-	public String insertOverallMonitoring(int monitoring_ID, int pay_ID, int power_consumption_ID, String month, int units, double balance, String comment){
+	public String insertOverallMonitoring(String pay_ID, String power_consumption_ID, String month, String comment){
 		String output = "";
 	
 		try{
@@ -23,18 +23,51 @@ public class OverallMonitoringResource {
 			if (con == null){
 				return "Error while connecting to the database for inserting."; 	
 			}
+			
+			//double query2 = Double.valueOf("SELECT SUM(balance) FROM payment WHERE month='"+month+"'");
+			String query2 = "SELECT SUM(balance) as totalBalance FROM payment WHERE month='"+month+"'";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query2);
+			
+			String balance = rs.getString("totalBalance");
+			double totbalance = Double.valueOf(balance);
+			
+			//int query3 = Integer. valueOf("SELECT SUM(units) FROM consumption WHERE month='"+month+"'");
+			String query3 = "SELECT SUM(units) as totalUnits FROM consumption WHERE month='"+month+"'";
+			//Statement stmt1 = con.createStatement();
+			ResultSet rs1 = stmt.executeQuery(query3);
+			
+			int units = Integer. valueOf(rs1.getString("totalUnits"));
+			
+			
 			// create a prepared statement
-			String query = " insert into consumption('monitoring_ID', 'pay_ID', 'power_consumption_ID', 'month', 'units', 'balance', 'comment') VALUES (?, ?, ?, ?, ?, ?, ?)";
+			//String query = " insert into monitoring('monitoring_ID', 'pay_ID', 'power_consumption_ID', 'month', 'units', 'comment') VALUES (?, ?, ?, ?, ?, ?, ?)";
+			String query = " insert into monitoring(monitoring_ID, pay_ID, power_consumption_ID, month, units, balance, comment) VALUES (?, ?, ?, ?, ?, ?, ?)";
 			
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
-			preparedStmt.setInt(1, 0);
-			preparedStmt.setInt(2, pay_ID);
-			preparedStmt.setInt(3, power_consumption_ID);
+			preparedStmt.setInt(1, 10);
+			preparedStmt.setInt(2, Integer.parseInt(pay_ID));
+			preparedStmt.setInt(3, Integer.parseInt(power_consumption_ID));
 			preparedStmt.setString(4, month);
+			//preparedStmt.setInt(5, 678);
 			preparedStmt.setInt(5, units);
-			preparedStmt.setDouble(5, balance);
-			preparedStmt.setString(6, comment);
+			//preparedStmt.setDouble(6, 569);
+			preparedStmt.setDouble(6, totbalance);
+			preparedStmt.setString(7, comment);
+			
+			
+			//Double balance1 = parseDouble(preparedStmt.setString(6, query2));
+			
+					
+			
+//			double  tot_amount;
+//			tot_amount = (Integer.valueOf(monthly_units) * Integer.valueOf(rate));
+//			preparedStmt.setDouble(9, tot_amount);
+			
+			//String query = "select bill_ID, power_consumption_ID, User_Name, NIC, address, b.month, monthly_units, rate, amount 
+			//from billing b, consumption c 
+			//WHERE b.power_consumption_ID = c.conID AND c.userID ='"+userID+"' ";
 			
 			// execute the statement
 			preparedStmt.execute();
@@ -42,14 +75,14 @@ public class OverallMonitoringResource {
 			output = "Inserted successfully";
 			
 		}catch (Exception e){
-			output = "Error while inserting the consumption.";
+			output = "Error while inserting the Overall Monitoring.";
 			System.err.println(e.getMessage());
 		}
 			
 		return output;
 		
 	}
-	
+
 	//read
 	public String readOverallMonitoring(){
 		String output = "";
@@ -148,7 +181,7 @@ public class OverallMonitoringResource {
 	}
 	
 	//Delete
-	public String deleteConsumption(int monitoring_ID){
+	public String deleteMonitoring(String monitoring_ID){
 		String output = "";
 		try{
 			
@@ -161,7 +194,7 @@ public class OverallMonitoringResource {
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			
 			// binding values
-			preparedStmt.setInt(1, monitoring_ID);
+			preparedStmt.setString(1, monitoring_ID);
 			
 			// execute the statement
 			preparedStmt.execute();
@@ -174,6 +207,77 @@ public class OverallMonitoringResource {
 		}
 		
 		return output;
+	}
+	
+	//read-given date report
+	public String readSpecificMonitoring(String givenDate)
+	{
+		String output = "";
+		try
+		{
+			Connection con = dbConnect.connectRoot();
+			if (con == null)
+			{
+				return "Error while connecting to the database for reading.";
+			}
+			
+			// Displaying the read concepts
+			output = "<table border='1'><tr><th>Monitoring ID</th>"
+			+"<th>Payment ID</th>"
+			+ "<th>month</th>"
+			+ "<th>units</th>"
+			+ "<th>balance</th>"
+			+ "<th>comment</th>"
+			+ "<th>Update</th></tr>";
+			
+			// Retrieving the concepts launched by a particular researcher
+			//int monitoring_ID, int pay_ID, int power_consumption_ID, String month, int units, double balance, String comment
+			String query = "select monitoring_ID, pay_ID, power_consumption_ID, month, units, balance, comment from monitoring where month = '"+givenDate+"' ";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			
+			
+			// iterate through the rows in the result set
+			while (rs.next())
+			{
+				String monitoring_ID = rs.getString("monitoring_ID");
+				String pay_ID = Integer.toString(rs.getInt("pay_ID"));
+				String power_consumption_ID = Integer.toString(rs.getInt("power_consumption_ID"));
+				String month = rs.getString("month");
+				String units = Integer.toString(rs.getInt("units"));
+				String balance = Double.toString(rs.getDouble("balance"));
+				String comment = rs.getString("comment");
+				
+				
+				// Add a row into the HTML table
+				output += "<tr><td>" + monitoring_ID + "</td>";
+				output += "<td>" + pay_ID + "</td>";
+				output += "<td>" + power_consumption_ID + "</td>";
+				output += "<td>" + month + "</td>";
+				output += "<td>" + units + "</td>";
+				output += "<td>" + balance + "</td>";
+				output += "<td>" + comment + "</td>";
+				
+				// button for updating a consumption
+				output += "<td><form method='post' action=''>"
+				+ "<input name='btnUpdate' "
+				+ " type='submit' value='Update' class='btn btn-secondary'>"
+				+ "<input name='conID' type='hidden' "
+				+ " value=' " + monitoring_ID + "'>"
+				+ "</form></td></tr>";
+				
+				}
+				con.close();
+				
+				// Completion of the HTML table
+				output += "</table>";
+			}
+			catch (Exception e)
+			{
+				output = "Error while retrieving overall Monitoring details!!";
+				System.out.println(e.getMessage());
+			}
+			return output;
 	}
 
 }
