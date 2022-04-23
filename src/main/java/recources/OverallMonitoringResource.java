@@ -143,7 +143,7 @@ public class OverallMonitoringResource {
 	}
 	
 	//update
-	public String updateMonitoring(int monitoring_ID, int pay_ID, int power_consumption_ID, String month, int units, double balance, String comment) {
+	public String updateMonitoring(String monitoring_ID, String comment) {
 		
 		String output = "";
 		try{
@@ -154,17 +154,13 @@ public class OverallMonitoringResource {
 			}
 		
 			// create a prepared statement
-			String query = "UPDATE monitoring SET  pay_ID=?, power_consumption_ID=?, month=?, units=?, balance=?, comment=?,  WHERE monitoring_ID=?";
+			String query = "UPDATE monitoring SET comment=?  WHERE monitoring_ID=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 		
 			// binding values
-			preparedStmt.setInt(1, pay_ID);
-			preparedStmt.setInt(2, power_consumption_ID);
-			preparedStmt.setString(3, month);
-			preparedStmt.setInt(4, units);
-			preparedStmt.setDouble(5, balance);
-			preparedStmt.setString(6, comment); ///// why
-			preparedStmt.setInt(7, monitoring_ID);
+
+			preparedStmt.setString(1, comment); ///// why
+			preparedStmt.setInt(2, Integer.parseInt(monitoring_ID));
 		
 			// execute the statement
 			preparedStmt.execute();
@@ -173,7 +169,7 @@ public class OverallMonitoringResource {
 			output = "Updated successfully";
 		
 		}catch (Exception e){
-			output = "Error while updating the consumption.";
+			output = "Error while updating the monitoring.";
 			System.err.println(e.getMessage());
 		}
 		

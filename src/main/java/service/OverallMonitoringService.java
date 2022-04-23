@@ -58,15 +58,10 @@ public class OverallMonitoringService {
 		JsonObject monitoringobject = new JsonParser().parse(monitoringData).getAsJsonObject();
 	
 		//Read the values from the JSON object
-		int monitoring_ID = monitoringobject.get("monitoring_ID").getAsInt();
-		int pay_ID = monitoringobject.get("pay_ID").getAsInt();
-		int power_consumption_ID = monitoringobject.get("power_consumption_ID").getAsInt();
-		String month = monitoringobject.get("month").getAsString();
-		int units = monitoringobject.get("units").getAsInt();
-		double balance = monitoringobject.get("balance").getAsDouble();
+		String monitoring_ID = monitoringobject.get("monitoring_ID").getAsString();
 		String comment = monitoringobject.get("comment").getAsString();
 		
-		String output = monitoringobj.updateMonitoring(monitoring_ID, pay_ID, power_consumption_ID, month, units, balance, comment);
+		String output = monitoringobj.updateMonitoring(monitoring_ID, comment);
 	
 		return output;
 	}
