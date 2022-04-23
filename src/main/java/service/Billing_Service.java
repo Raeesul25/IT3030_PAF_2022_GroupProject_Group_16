@@ -30,27 +30,26 @@ public class Billing_Service {
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
-	public String viewBill(){
+	public String viewAllBills(){
 		
-		return objectBill.viewBill();
+		return objectBill.viewAllBills();
 	}
 
-/*	
+	
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String insertConsumption(@FormParam("userID") String userID, 
-			@FormParam("month") String month,@FormParam("premonread") String premonread,
-			@FormParam("curmonread") String curmonread){
+	public String insertBill(@FormParam("power_consumption_ID") String power_consumption_ID, 
+			@FormParam("User_Name") String User_Name,@FormParam("NIC") String NIC, @FormParam("address") String address, @FormParam("month") String month, @FormParam("monthly_units") String monthly_units, 
+			@FormParam("rate") String rate){
 	
-		String output = consumptionobj.insertConsumption(userID, month, premonread, 
-				curmonread);
+		String output = objectBill.insertBill(power_consumption_ID, User_Name, NIC, address, month, monthly_units, rate);
 	
 		return output;
 	}
 	
-	
+	/*
 	@PUT
 	@Path("/update/{conID}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -68,13 +67,13 @@ public class Billing_Service {
 		String curmonread = consumptionobject.get("curmonread").getAsString();
 		String conunits = consumptionobject.get("conunits").getAsString();
 		
-		String output = consumptionobj.updateConsumption(conID, userID, month, premonread, 
+		String output = objectBill.updateConsumption(conID, userID, month, premonread, 
 				curmonread, conunits);
 	
 		return output;
 	}
-	
 	*/
+	
 	//   "/{name}"
 	@DELETE
 	@Path("{bill_ID}")
@@ -84,6 +83,14 @@ public class Billing_Service {
 		return objectBill.deleteBill(bill_ID);
 	}
 	
-	
-	
+	// View single bill
+	/*
+	@GET
+	@Path("/{userID}")
+	@Produces(MediaType.TEXT_HTML)
+	public String readSpecificUserConsumption(@PathParam("userID") String userID)
+	{
+		return consumptionobj.readSpecificUserConsumption(userID);
+	}
+	*/
 }
