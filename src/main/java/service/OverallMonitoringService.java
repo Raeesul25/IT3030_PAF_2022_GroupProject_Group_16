@@ -78,5 +78,15 @@ public class OverallMonitoringService {
 	public String deleteBill(@PathParam ("monitoring_ID") String monitoring_ID)
 	{
 		return monitoringobj.deleteMonitoring(monitoring_ID);
+	}	
+	
+	@GET
+	@Path("/{givenDate}")
+	@Produces(MediaType.TEXT_HTML)
+	public String readSpecificUserConsumption(@PathParam("month") String month)
+	{
+		return monitoringobj.readSpecificMonitoring(month);
 	}
+	
+	
 }
