@@ -2,9 +2,6 @@ package recources;
 
 import java.sql.*;
 
-import java.util.ArrayList;
-
-import model.Payment;
 import util.DBConnection;
 
 
@@ -64,8 +61,10 @@ public class PaymentResources {
 				
 				// execute the statement
 				preparedStmt.execute();
+				
 				con.close();
-				output = "Payment Inserted successfully"; //Successful message when inserting payment
+				output = "Payment Inserted successfully"; 
+				//Successful message when inserting payment
 				
 				
 			}catch (Exception e){
@@ -104,6 +103,7 @@ public class PaymentResources {
 
 				con.close();
 				output = "Payment record Deleted successfully";
+				//Successful message when deleting payment row
 			}catch (Exception e){
 				output = "Error while deleting the payment record.";
 				System.err.println(e.getMessage());
@@ -135,10 +135,11 @@ public class PaymentResources {
 				"<th>Paid Date</th>" +
 				"<th>Update</th><th>Delete</th></tr>";
 				
-				String query = "select * from payment ";//WHERE userID=?";
+				//query to get all the payment details
+				String query = "select * from payment ";
 				PreparedStatement preparedStmt = con.prepareStatement(query);
 				// binding values
-				//preparedStmt.setString(2,u_ID);
+
 				ResultSet rs = preparedStmt.executeQuery(query);
 				
 				// iterate through the rows in the result set
