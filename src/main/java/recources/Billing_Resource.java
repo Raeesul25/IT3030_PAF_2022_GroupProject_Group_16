@@ -152,7 +152,7 @@ public class Billing_Resource {
 			}
 			catch (Exception e)
 			{
-				output = "Error while retrieving single bill details!!";
+				output = "Error while retrieving the user bill.";
 				System.out.println(e.getMessage());
 			}
 			return output;
@@ -240,52 +240,7 @@ public class Billing_Resource {
 		
 		return output;
 	}
-	
-	
-	
-	/*
-	public String updateBill(String bill_ID, String power_consumption_ID, String User_Name, String NIC, String address, String month, String monthly_units, String rate, String amount) {
 		
-		String output = "";
-		try{
-			
-			Connection con = dbConnect.connectRoot();
-			if (con == null){
-				return "Error while connecting to the database for updating."; 	
-			}
-		
-			// create a prepared statement
-			String query = "UPDATE electrogrid.billing SET power_consumption_ID=?, User_Name=?, NIC=?, address=?, month=?, monthly_units=?, rate=?, amount=?  WHERE bill_ID=?";
-			PreparedStatement preparedStmt = con.prepareStatement(query);
-		
-			// binding values
-			preparedStmt.setInt(1, Integer.parseInt(bill_ID));
-			preparedStmt.setInt(2, Integer.parseInt(power_consumption_ID));
-			preparedStmt.setString(3, User_Name);
-			preparedStmt.setString(4, NIC);
-			preparedStmt.setString(5, address);
-			preparedStmt.setString(6, month);
-			preparedStmt.setInt(7, Integer.parseInt(monthly_units));
-			preparedStmt.setInt(8, Integer.parseInt(rate));
-			preparedStmt.setDouble(9, Double.parseDouble(amount));
-			//preparedStmt.setInt(10, Integer.parseInt(bill_ID));
-		
-			// execute the statement
-			preparedStmt.execute();
-		
-			con.close();
-			output = "Bill Record updated successfully";
-		
-		}catch (Exception e){
-			output = "Error while updating the Bill Record.";
-			System.err.println(e.getMessage());
-		}
-		
-		return output;
-	}
-	*/
-	
-	
 	
 	// DELETE
 	

@@ -35,7 +35,7 @@ public class Billing_Service {
 	// View single bill
 	
 	@GET
-	@Path("/{userID}")
+	@Path("{userID}")
 	@Produces(MediaType.TEXT_HTML)
 	public String viewBill(@PathParam("userID") String userID)
 	{
