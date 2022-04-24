@@ -99,65 +99,81 @@ public class PaymentResources {
 						{
 							return "Error while connecting to the database for reading.";
 						}
+						System.out.println("userId = "+user_ID);
 						
-						// Displaying the read concepts
-						output = "<table border='1'><tr><th>Payment ID</th>" +
-								"<th>Bill ID</th>" +
-								"<th>Toatl Amount</th>" +
-								"<th>Paid Amount</th>" +
-								"<th>Balance</th>" +
-								"<th>Month</th>" +
-								"<th>Payment Type</th>" +
-								"<th>Card no.</th>" +
-								"<th>Paid Date</th>" +
-								"<th>Update</th><th>Delete</th></tr>";
-						
-						// Retrieving the concepts launched by a particular researcher
-						String query ="SELECT * from payment where userID = '"+ user_ID+"'";
-						Statement createStmt = con.createStatement();
-						
-						ResultSet rs = createStmt.executeQuery(query);
-						
-						// iterate through the rows in the result set
-						while (rs.next())
-						{
-							String payment_ID = Integer.toString(rs.getInt("paymentID"));
-							String userID = rs.getString("userID");
-							String billID = rs.getString("billID");
-							String total_amount = Double.toString(rs.getDouble("total_amount"));
-							String paid_amount = Double.toString(rs.getDouble("paid_amount"));
-							String balance = Double.toString(rs.getDouble("balance"));
-							String month =rs.getString("month");
-							String payment_type =rs.getString("payment_type");
-							String card_no =rs.getString("card_no");
-							String paid_Date =rs.getString("paid_Date");
+						//get month and amount of bill
+						String q1 = "SELECT name from electrogrid.users where userID = '"+ user_ID +"'";
+						Statement stmt2 = con.createStatement();
+						ResultSet rs1 = stmt2.executeQuery(q1);
+						rs1.next();
+						System.out.println("No user details for"+rs1.getString(1));
+						//check whether the given user id exists on database
+						if(rs1.next() == false) {
+							// Displaying the read concepts
+							output = "<table border='1'><tr><th>Payment ID</th>" +
+									"<th>Bill ID</th>" +
+									"<th>Toatl Amount</th>" +
+									"<th>Paid Amount</th>" +
+									"<th>Balance</th>" +
+									"<th>Month</th>" +
+									"<th>Payment Type</th>" +
+									"<th>Card no.</th>" +
+									"<th>Paid Date</th>" +
+									"<th>Update</th><th>Delete</th></tr>";
 							
+							// Retrieving the concepts launched by a particular researcher
+							String query ="SELECT * from payment where userID = '"+ user_ID+"'";
+							Statement createStmt = con.createStatement();
 							
-							// Add into the html table
-							output += "<tr><td>" + payment_ID + "</td>";
-							output += "<td>" + billID + "</td>";
-							output += "<td>" + total_amount + "</td>";
-							output += "<td>" + paid_amount + "</td>";
-							output += "<td>" + balance + "</td>";
-							output += "<td>" + month + "</td>";
-							output += "<td>" + payment_type + "</td>";
-							output += "<td>" + card_no + "</td>";
-							output += "<td>" + paid_Date + "</td>";
-						
-							// button for backing a concept
-							 output += "<td><input name='btnUpdate' " 
-							 + " type='button' value='Update'></td>"
-							 + "<td><form method='post' action=''>"
-							 + "<input name='btnRemove' " 
-							 + " type='submit' value='Delete'>"
-							 + "<input name='userID' type='hidden' " 
-							 + " value='" + userID + "'>" + "</form></td></tr>"; 
-							 } 
-
-						con.close();
-						
-						// Complete the html table
-						output += "</table>";
+							ResultSet rs = createStmt.executeQuery(query);
+							
+							// iterate through the rows in the result set
+							while (rs.next())
+							{
+								String payment_ID = Integer.toString(rs.getInt("paymentID"));
+								String userID = rs.getString("userID");
+								String billID = rs.getString("billID");
+								String total_amount = Double.toString(rs.getDouble("total_amount"));
+								String paid_amount = Double.toString(rs.getDouble("paid_amount"));
+								String balance = Double.toString(rs.getDouble("balance"));
+								String month =rs.getString("month");
+								String payment_type =rs.getString("payment_type");
+								String card_no =rs.getString("card_no");
+								String paid_Date =rs.getString("paid_Date");
+								
+								
+								// Add into the html table
+								output += "<tr><td>" + payment_ID + "</td>";
+								output += "<td>" + billID + "</td>";
+								output += "<td>" + total_amount + "</td>";
+								output += "<td>" + paid_amount + "</td>";
+								output += "<td>" + balance + "</td>";
+								output += "<td>" + month + "</td>";
+								output += "<td>" + payment_type + "</td>";
+								output += "<td>" + card_no + "</td>";
+								output += "<td>" + paid_Date + "</td>";
+							
+								// button for backing a concept
+								 output += "<td><input name='btnUpdate' " 
+								 + " type='button' value='Update'></td>"
+								 + "<td><form method='post' action=''>"
+								 + "<input name='btnRemove' " 
+								 + " type='submit' value='Delete'>"
+								 + "<input name='userID' type='hidden' " 
+								 + " value='" + userID + "'>" + "</form></td></tr>"; 
+								 } 
+	
+							con.close();
+							
+							// Complete the html table
+							output += "</table>";
+						}
+							
+						else {
+							System.out.println("No user details for"+rs1.getString(1));
+							return output ="The user does not exist in the database";
+							
+						}
 						}
 						catch (Exception e)
 						{
@@ -170,22 +186,30 @@ public class PaymentResources {
 		
 		
 		//Insert new payment details to the table
-		public String insertPayment(String userID,String billID,  String paid_amount,String payment_type,String card_no){
+		public String insertPayment(String userID,String billID,  String p_amount,String payment_type,String card_no){
 			
 			String output = "";		
-			int bill_ID = Integer.parseInt(billID);
 			
 			//check whether the input fields are empty or not
-			if(userID.isEmpty() && billID.isEmpty() && paid_amount.isEmpty()  && payment_type.isEmpty() && card_no.isEmpty())
-				return "Fields cannot be empty";
+			if(userID.isEmpty() && billID.isEmpty() && p_amount.isEmpty()  && payment_type.isEmpty() && card_no.isEmpty()) {
 			
+				System.out.println("Check2");
+				return "Fields cannot be empty";
+			}
 			else {
+				System.out.println("Check1");
+				
 					try{
 		
 						Connection con = dbConnect.connect();
 						if (con == null){
 							return "Error while connecting to the database for inserting."; 	
 						}
+						
+						//convert to relevant data type
+						double paid_amount= Double.parseDouble(p_amount);
+						int bill_ID = Integer.parseInt(billID);
+						
 						
 						// create a prepared statement
 						String query = " insert into payment(paymentID,userID,billID,total_amount,paid_amount,balance,month,payment_type,card_no,paid_Date) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?)";						
@@ -216,21 +240,21 @@ public class PaymentResources {
 						Statement stmt = con.createStatement();
 						ResultSet rs = stmt.executeQuery(q2);
 						
-						//check whether a payment record has happened before to the given bill id
+						//check whether a payment record already exited to the given bill id
 						if(rs.next() == false) {
-							System.out.println("-------------------------");
+
 							// binding values for payment table
-							preparedStmt.setDouble(5, Double.parseDouble(paid_amount));
+							preparedStmt.setDouble(5, paid_amount);
 							
 							//get balance (if user paid less than the total amount, balance will be a negative value) 
-							double balance =  Double.parseDouble(paid_amount) - Double.parseDouble(total_amount);
+							double balance =  paid_amount - Double.parseDouble(total_amount);
 							preparedStmt.setDouble(6, balance);
 							
 							
 							
 						}
 						else{//if the payment is doing for a new bill which has not done any payment
-						double pamount = Double.parseDouble(rs.getString(1))+Double.parseDouble(paid_amount);
+						double pamount = Double.parseDouble(rs.getString(1))+paid_amount;
 						double pbalance = pamount - Double.parseDouble(total_amount);
 		
 						preparedStmt.setDouble(5, pamount);
@@ -316,24 +340,47 @@ public class PaymentResources {
 		}
 			
 			//Delete payment by payment id
-			public String deletepayment(String paymentID){
+			public String deletepayment(String billID){
 				String output = "";
+				int bill_ID = Integer.parseInt(billID);
+				
 				try{
 					
 					Connection con = dbConnect.connect();
 					if (con == null){
 						return "Error while connecting to the database for deleting."; 	
 					}
-					// create a prepared statement
-					String query = "DELETE FROM payment WHERE paymentID='"+paymentID+"'";
-					Statement preparedStmt = con.createStatement();
 					
-					// execute the statement
-					preparedStmt.execute(query);
-	
-					con.close();
-					output = "Payment record Deleted successfully";
-					//Successful message when deleting payment row
+					//get month and amount of bill
+					String q2 = "SELECT balance from payment where billID = '"+ bill_ID +"'order by paymentID desc limit 1";
+					Statement stmt = con.createStatement();
+					ResultSet rs = stmt.executeQuery(q2);
+					
+					//check whether a payment record has happened before to the given bill id
+					if(rs.next() == true) {
+						// get balance of the given bill
+						double balance =   Double.parseDouble(rs.getString(1));
+						
+						if(balance == 0.00) {
+							// create a prepared statement
+							String query = "DELETE FROM payment WHERE billID='"+bill_ID+"'";
+							Statement preparedStmt = con.createStatement();
+							
+							// execute the statement
+							preparedStmt.execute(query);
+			
+							con.close();
+							output = "Payment records of "+ bill_ID +" Deleted successfully";
+							//Successful message when deleting payment row
+						}
+						else
+							output = "Bill payment records cannot be deleted since it has a balance.";
+						
+					}
+					
+					else
+						output ="Entered bill doesnot have any payment details";
+					
 				}catch (Exception e){
 					output = "Error while deleting the payment record.";
 					System.err.println(e.getMessage());

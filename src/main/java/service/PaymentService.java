@@ -49,7 +49,7 @@ public class PaymentService {
 	@Path("/insert")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String insertConsumption(@FormParam("userID") String userID, 
+	public String insertPayment(@FormParam("userID") String userID, 
 			@FormParam("billID") String billID,
 			@FormParam("paid_amount") String paid_amount,@FormParam("payment_type") String payment_type,@FormParam("card_no") String card_no){
 	
@@ -63,10 +63,10 @@ public class PaymentService {
 	@Path("/update/{paymentID}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String updatePayment(@PathParam ("paymentID") String paymentID, String consumptionData){
+	public String updatePayment(@PathParam ("paymentID") String paymentID, String paymentData){
 		
 		//Convert the input string to a JSON object
-		JsonObject PaymnetsobjJ = new JsonParser().parse(consumptionData).getAsJsonObject();
+		JsonObject PaymnetsobjJ = new JsonParser().parse(paymentData).getAsJsonObject();
 	
 		//Read the values from the JSON object
 		String paytID = PaymnetsobjJ.get("paymentID").getAsString();
@@ -86,11 +86,11 @@ public class PaymentService {
 	
 	
 	@DELETE
-	@Path("/delete/{paymentID}")
+	@Path("/delete/{billID}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String deletePaymentRecord(@PathParam ("paymentID") String paymentID)
+	public String deletePaymentRecords(@PathParam ("billID") String billID)
 	{
-		return Paymnetsobj.deletepayment(paymentID);
+		return Paymnetsobj.deletepayment(billID);
 	}
 	
 
