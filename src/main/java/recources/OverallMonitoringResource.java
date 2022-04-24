@@ -55,7 +55,7 @@ public class OverallMonitoringResource {
 			
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
-			preparedStmt.setInt(1, 10);
+			preparedStmt.setInt(1, 0);
 			preparedStmt.setInt(2, Integer.parseInt(pay_ID));
 			preparedStmt.setInt(3, Integer.parseInt(power_consumption_ID));
 			preparedStmt.setString(4, month);
@@ -81,7 +81,7 @@ public class OverallMonitoringResource {
 			// execute the statement
 			preparedStmt.execute();
 			con.close();
-			output = "Inserted successfully";
+			output = "Inserted Overall Monitoring record successfully";
 			
 		}catch (Exception e){
 			output = "Error while inserting the Overall Monitoring.";
@@ -168,17 +168,17 @@ public class OverallMonitoringResource {
 		
 			// binding values
 
-			preparedStmt.setString(1, comment); ///// why
+			preparedStmt.setString(1, comment); 
 			preparedStmt.setInt(2, Integer.parseInt(monitoring_ID));
 		
 			// execute the statement
 			preparedStmt.execute();
 		
 			con.close();
-			output = "Updated successfully";
+			output = "Updated the comment of the record successfully";
 		
 		}catch (Exception e){
-			output = "Error while updating the monitoring.";
+			output = "Error while updating the comment of the record.";
 			System.err.println(e.getMessage());
 		}
 		
@@ -205,9 +205,9 @@ public class OverallMonitoringResource {
 			preparedStmt.execute();
 
 			con.close();
-			output = "Deleted successfully";
+			output = "Deleted the monitoring record successfully";
 		}catch (Exception e){
-			output = "Error while deleting the Consumption.";
+			output = "Error while deleting the monitoring record.";
 			System.err.println(e.getMessage());
 		}
 		
@@ -228,7 +228,8 @@ public class OverallMonitoringResource {
 			
 			// Displaying the read concepts
 			output = "<table border='1'><tr><th>Monitoring ID</th>"
-			+"<th>Payment ID</th>"
+			+ "<th>Payment ID</th>"
+			+ "<th>Power Consuption ID</th>"		
 			+ "<th>month</th>"
 			+ "<th>units</th>"
 			+ "<th>balance</th>"
