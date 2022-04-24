@@ -36,6 +36,14 @@ public class PaymentService {
 		return Paymnetsobj.readPayment();
 	}
 	
+	@GET
+	@Path("/{userID}")
+	@Produces(MediaType.TEXT_HTML)
+	public String readOneUserPayment(@PathParam("userID") String userID)
+	{
+		return Paymnetsobj.readOneUserPayment(userID);
+	}
+	
 	
 	@POST
 	@Path("/insert")
@@ -52,22 +60,26 @@ public class PaymentService {
 	
 	
 	@PUT
-	@Path("/update/{billID}")
+	@Path("/update/{paymentID}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String updatePayment(@PathParam ("billID") String billID, String consumptionData){
+	public String updatePayment(@PathParam ("paymentID") String paymentID, String consumptionData){
 		
 		//Convert the input string to a JSON object
 		JsonObject PaymnetsobjJ = new JsonParser().parse(consumptionData).getAsJsonObject();
 	
 		//Read the values from the JSON object
-		String paymentID = PaymnetsobjJ.get("paymentID").getAsString();
-		String billID1 = PaymnetsobjJ.get("billID").getAsString();
+		String paytID = PaymnetsobjJ.get("paymentID").getAsString();
+		String billID = PaymnetsobjJ.get("billID").getAsString();
 		String new_paid = PaymnetsobjJ.get("new_paid").getAsString();
 		String payment_type = PaymnetsobjJ.get("payment_type").getAsString();
 		String card_no = PaymnetsobjJ.get("card_no").getAsString();
+		String new_balance = PaymnetsobjJ.get("new_balance").getAsString();
+		String total_amount = PaymnetsobjJ.get("total_amount").getAsString();
+		String paid_Date = PaymnetsobjJ.get("paid_Date").getAsString();
+		String month = PaymnetsobjJ.get("month").getAsString();
 		
-		String output = Paymnetsobj.updatePayment(paymentID,billID1,payment_type,card_no,new_paid);
+		String output = Paymnetsobj.updatePayment(paytID,billID,month,payment_type,card_no,total_amount,new_paid,new_balance,paid_Date);
 	
 		return output;
 	}
@@ -81,12 +93,5 @@ public class PaymentService {
 		return Paymnetsobj.deletepayment(paymentID);
 	}
 	
-	@GET
-	@Path("/{userID}")
-	@Produces(MediaType.TEXT_HTML)
-	public String readOneUserPayment(@PathParam("userID") String userID)
-	{
-		return Paymnetsobj.readOneUserPayment(userID);
-	}
 
 }
