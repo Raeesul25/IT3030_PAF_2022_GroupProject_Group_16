@@ -16,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
 
 import recources.ConsumptionResource;
 
@@ -32,6 +34,7 @@ public class ConsumptionService {
 	@Produces(MediaType.TEXT_HTML)
 	public String readAllConsumption()
 	{
+		// calling the raed consumption method
 		return conAPI.readConsumption();
 	}
 	
@@ -44,6 +47,7 @@ public class ConsumptionService {
 			@FormParam("month") String month,@FormParam("premonread") String premonread,
 			@FormParam("curmonread") String curmonread){
 	
+		// calling the insert method
 		String output = conAPI.insertConsumption(userID, month, premonread, 
 				curmonread);
 	
@@ -66,6 +70,7 @@ public class ConsumptionService {
 		String premonread = consumptionobject.get("premonread").getAsString();
 		String curmonread = consumptionobject.get("curmonread").getAsString();
 		
+		// calling the update method
 		String output = conAPI.updateConsumption(conID, userID, month, premonread, 
 				curmonread);
 	
@@ -78,21 +83,45 @@ public class ConsumptionService {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String deleteConceptDetails(@PathParam ("conID") String conID)
 	{
+		// calling the delete method
 		return conAPI.deleteConsumption(conID);
 	}
 	
-	/*** Viewing Consumption details as a user(HTTP Verb : GET) by accepting researcher ID as input and produces an HTML Table ***/
+	/*** Viewing Consumption details as a user(HTTP Verb : GET) by accepting user ID as input and produces an HTML Table ***/
 	@GET
 	@Path("/{userID}")
 	@Produces(MediaType.TEXT_HTML)
-	public String readSpecificUserConsumption(@PathParam("userID") String userID)
+	public String SpecificUserConsumption(@PathParam("userID") String userID)
 	{
-		return conAPI.readSpecificUserConsumption(userID);
+		// calling read specific user's consumption method
+		return conAPI.SpecificUserConsumption(userID);
 	}
 	
 	
 	/************************************** INTER SERVICE COMMUNICATION ********************************************/
 	//Method to get the user ID from user service
+	@GET
+	@Path("/getUserDetails/{userID}")
+	@Produces(MediaType.TEXT_HTML)
+	public String getUserName(@PathParam("userID") String userID){
+		
+		//Path to get the User Name
+		String path = "http://localhost:8083/gadget_badget/UserService/Users/getResearcherID/";
+	       
+	    //Create a user in Server to act as a user to another Server
+        Client client = Client.create();
+        
+        //Creating the web resource
+        WebResource target = client.resource(path);
+       
+        /*************** Testing the inter-service communication *******************************/
+        //Get the response String and save to a String(Response is a userID)
+        String response = target.queryParam("userID", userID).accept("application/xml").get(String.class);
+        
+        //return readUserName();
+        return response;	
+	}
+	
 	
 	/***************************** CONSUMPTION MONITORING SERVICE AS SERVER FOR INTER SERVICE COMMUNICATION **********************************/
 	//Method to send consumption ID to billing  service 
@@ -101,6 +130,7 @@ public class ConsumptionService {
     @Produces(MediaType.APPLICATION_XML)
     public String readConsumptionID(@QueryParam("month")String month) {
 
+    	// calling get consumption ID method
 	    return conAPI.getconID(month);
     }
     

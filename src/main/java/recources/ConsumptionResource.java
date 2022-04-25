@@ -34,6 +34,7 @@ public class ConsumptionResource {
 			preparedStmt.setInt(4, Integer.parseInt(premonreading));
 			preparedStmt.setInt(5, Integer.parseInt(curmonreading));
 			
+			// calculate Monthly consumption units
 			int conunits;
 			conunits = (Integer.valueOf(curmonreading) - Integer.valueOf(premonreading));
 			preparedStmt.setInt(6, conunits);
@@ -73,6 +74,7 @@ public class ConsumptionResource {
 			preparedStmt.setInt(3, Integer.parseInt(premonreading));
 			preparedStmt.setInt(4, Integer.parseInt(curmonreading));
 			
+			// calculate updated monthly consumption units
 			int conunits;
 			conunits = (Integer.valueOf(curmonreading) - Integer.valueOf(premonreading));
 			preparedStmt.setInt(5, conunits);
@@ -190,7 +192,7 @@ public class ConsumptionResource {
 	}
 	
 	// -- Method to read specific user's consumption---
-	public String readSpecificUserConsumption(String userID)
+	public String SpecificUserConsumption(String userID)
 	{
 		String output = "";
 		try
@@ -201,15 +203,16 @@ public class ConsumptionResource {
 				return "Error while connecting to the database for reading.";
 			}
 			
-			// Displaying the read concepts
-			output = "<table border='1'><tr><th>Consumption ID</th>"
+			// Displaying the read consumptions
+			output = "<h2>" + userID + " Consumption Details" + "<h2><br>"; 
+			output += "<table border='1'><tr><th>Consumption ID</th>"
 			+"<th>Month</th>"
 			+ "<th>Previous Month Reading</th>"
 			+ "<th>Current Month Reading</th>"
 			+ "<th>Consumption Units</th>"
 			+ "<th>Update</th></tr>";
 			
-			// Retrieving the concepts launched by a particular researcher
+			// Retrieving the consumption
 			String query = "select conID, month, preMonReading, curMonReading, conUnits from consumption where userID = '"+userID+"' ";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -267,15 +270,16 @@ public class ConsumptionResource {
 				return "Error while connecting to the database for reading.";
 			}
 			
-			// Displaying the read concepts
-			output = "<table border='1'><tr><th>Consumption ID</th>"
+			// Displaying the read Consumption
+			output = "<h2>" + month + " Consumption Details" + "</h2><br>";
+			output += "<table border='1'><tr><th>Consumption ID</th>"
 			+"<th>User ID</th>"
 			+ "<th>Previous Month Reading</th>"
 			+ "<th>Current Month Reading</th>"
 			+ "<th>Consumption Units</th>"
 			+ "<th>Update</th></tr>";
 			
-			// Retrieving the concepts launched by a particular researcher
+			// Retrieving the Consumption Details
 			String query = "select conID, userID, preMonReading, curMonReading, conUnits from consumption where month = '"+month+"' ";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -334,7 +338,7 @@ public class ConsumptionResource {
 				return "Error while connecting to the database for reading.";
 			}
 		
-			// Retrieving the concepts launched by a particular researcher
+			// Retrieving the Consumption IDs
 			String query = "SELECT conID "
 			+ "FROM consumption "
 			+ "WHERE month = '"+month+"' ";
