@@ -2,14 +2,12 @@ package service;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-//import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-//import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -34,7 +32,7 @@ public class ConsumptionService {
 	@Produces(MediaType.TEXT_HTML)
 	public String readAllConsumption()
 	{
-		// calling the raed consumption method
+		// calling the read consumption method
 		return conAPI.readConsumption();
 	}
 	
@@ -48,10 +46,7 @@ public class ConsumptionService {
 			@FormParam("curmonread") String curmonread){
 	
 		// calling the insert method
-		String output = conAPI.insertConsumption(userID, month, premonread, 
-				curmonread);
-	
-		return output;
+		return conAPI.insertConsumption(userID, month, premonread, curmonread);
 	}
 	
 	/*** Update Function(HTTP Verb : PUT) Using JSON and produces a plain text as output result***/
@@ -71,10 +66,7 @@ public class ConsumptionService {
 		String curmonread = consumptionobject.get("curmonread").getAsString();
 		
 		// calling the update method
-		String output = conAPI.updateConsumption(conID, userID, month, premonread, 
-				curmonread);
-	
-		return output;
+		return conAPI.updateConsumption(conID, userID, month, premonread, curmonread);
 	}
 	
 	/*** DELETE FUNCTION (HTTP Verb : DELETE) using XML and produces plain text as output results ***/
@@ -91,22 +83,22 @@ public class ConsumptionService {
 	@GET
 	@Path("/{userID}")
 	@Produces(MediaType.TEXT_HTML)
-	public String SpecificUserConsumption(@PathParam("userID") String userID)
+	public String specificUserConsumption(@PathParam("userID") String userID)
 	{
 		// calling read specific user's consumption method
-		return conAPI.SpecificUserConsumption(userID);
+		return conAPI.specificUserConsumption(userID);
 	}
 	
 	
 	/************************************** INTER SERVICE COMMUNICATION ********************************************/
 	//Method to get the user ID from user service
 	@GET
-	@Path("/getUserDetails/{userID}")
+	@Path("/getUserName/{userID}")
 	@Produces(MediaType.TEXT_HTML)
 	public String getUserName(@PathParam("userID") String userID){
 		
 		//Path to get the User Name
-		String path = "http://localhost:8083/gadget_badget/UserService/Users/getResearcherID/";
+		String path = "http://localhost:8078/Consumption_Monitoring_Service/userService/users/getUserName/";
 	       
 	    //Create a user in Server to act as a user to another Server
         Client client = Client.create();
@@ -114,12 +106,9 @@ public class ConsumptionService {
         //Creating the web resource
         WebResource target = client.resource(path);
        
-        /*************** Testing the inter-service communication *******************************/
+        /*************** Testing the Inter service communication *******************************/
         //Get the response String and save to a String(Response is a userID)
-        String response = target.queryParam("userID", userID).accept("application/xml").get(String.class);
-        
-        //return readUserName();
-        return response;	
+        return target.queryParam("userID", userID).accept("application/xml").get(String.class);	
 	}
 	
 	

@@ -11,7 +11,7 @@ public class ConsumptionResource {
 	
 	//DBConnection object to connect to database
 	DBConnection dbConnect = new DBConnection();
-	
+	String dbErrorMessage = "Error while connecting to the database for reading.";
 	
 	// ---Method to insert the consumption details---
 	public String insertConsumption(String userID, String month, String premonreading, String curmonreading){
@@ -21,14 +21,14 @@ public class ConsumptionResource {
 
 			Connection con = dbConnect.connect();
 			if (con == null){
-				return "Error while connecting to the database for inserting."; 	
+				return dbErrorMessage; 	
 			}
 			// create a prepared statement
 			String query = " insert into consumption(conID,userID,month,preMonReading,curMonReading,conUnits) VALUES (?, ?, ?, ?, ?, ?)";
 			
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
-			preparedStmt.setInt(1, 1);
+			preparedStmt.setInt(1, 0);
 			preparedStmt.setString(2, userID);
 			preparedStmt.setString(3, month);
 			preparedStmt.setInt(4, Integer.parseInt(premonreading));
@@ -61,7 +61,7 @@ public class ConsumptionResource {
 			
 			Connection con = dbConnect.connect();
 			if (con == null){
-				return "Error while connecting to the database for updating."; 	
+				return dbErrorMessage; 	
 			}
 		
 			// create a prepared statement
@@ -101,7 +101,7 @@ public class ConsumptionResource {
 			
 			Connection con = dbConnect.connect();
 			if (con == null){
-				return "Error while connecting to the database for deleting."; 	
+				return dbErrorMessage; 	
 			}
 			// create a prepared statement
 			String query = "DELETE FROM consumption WHERE conID=?";
@@ -129,7 +129,7 @@ public class ConsumptionResource {
 		try{
 			Connection con = dbConnect.connect();
 			if (con == null){
-				return "Error while connecting to the database for reading."; 	
+				return dbErrorMessage; 	
 			}
 			// Prepare the html table to be displayed
 			output = "<table border='1'><tr><th>Consumption ID</th><th>User ID</th>" +
@@ -192,7 +192,7 @@ public class ConsumptionResource {
 	}
 	
 	// -- Method to read specific user's consumption---
-	public String SpecificUserConsumption(String userID)
+	public String specificUserConsumption(String userID)
 	{
 		String output = "";
 		try
@@ -200,7 +200,7 @@ public class ConsumptionResource {
 			Connection con = dbConnect.connect();
 			if (con == null)
 			{
-				return "Error while connecting to the database for reading.";
+				return dbErrorMessage;
 			}
 			
 			// Displaying the read consumptions
@@ -259,7 +259,7 @@ public class ConsumptionResource {
 
 
 	// -- Method to read specific month's consumption---
-	public String SpecificMonthConsumption(String month)
+	public String specificMonthConsumption(String month)
 	{
 		String output = "";
 		try
@@ -267,7 +267,7 @@ public class ConsumptionResource {
 			Connection con = dbConnect.connect();
 			if (con == null)
 			{
-				return "Error while connecting to the database for reading.";
+				return dbErrorMessage;
 			}
 			
 			// Displaying the read Consumption
@@ -335,7 +335,7 @@ public class ConsumptionResource {
 			Connection con = dbConnect.connect();
 		
 			if (con == null){
-				return "Error while connecting to the database for reading.";
+				return dbErrorMessage;
 			}
 		
 			// Retrieving the Consumption IDs

@@ -1,7 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-
 public class Consumption {
 	
 	//Attributes
@@ -11,13 +9,7 @@ public class Consumption {
 	private int preMonReading;
 	private int curMonReading;
 	private int conUnits;
-	private ArrayList<Consumption> summary;
 	
-	
-	public Consumption() {
-		
-	}
-
 
 	public int getConID() {
 		return conID;
@@ -70,26 +62,12 @@ public class Consumption {
 
 
 	public int getConUnits() {
-//		conUnits = (curMonReading - preMonReading);
 		return conUnits;
 	}
 
 
 	public void setConUnits(int conUnits) {
 		this.conUnits = conUnits;
-	}
-
-
-	public ArrayList<Consumption> getSummary() {
-		return summary;
-	}
-
-
-	public void setSummary(ArrayList<Consumption> summary) {
-		this.summary = summary;
-	}
-	
-	
-	
+	}	
 	
 }
