@@ -14,84 +14,90 @@ public class OverallMonitoringResource {
 	String dbErrorMessage = "Database Connection failed!!";
 	
 	//Insert
-	public String insertOverallMonitoring(String pay_ID, String power_consumption_ID, String month, String comment){
-		String output = "";
-	
-		try{
-
-			Connection con = dbConnect.connectRoot();
-			if (con == null){
-				return "Error while connecting to the database for inserting."; 	
-			}
-			
-			//double query2 = Double.valueOf("SELECT SUM(balance) FROM payment WHERE month='"+month+"'");
-			String query2 = "SELECT SUM(balance) as totalBalance FROM payment WHERE month='"+month+"'";
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(query2);
-			rs.next();
-			String balance = rs.getString(1);
-			System.out.println(balance);
-			
-			//String balance = rs.getString("totalBalance");
-			
-			double totbalance = Double.valueOf(balance);
-			System.out.println(totbalance);
-			
-			//int query3 = Integer. valueOf("SELECT SUM(units) FROM consumption WHERE month='"+month+"'");
-			String query3 = "SELECT SUM(conUnits) as totalUnits FROM consumption WHERE month='"+month+"'";
-			Statement stmt1 = con.createStatement();
-			ResultSet rs1 = stmt1.executeQuery(query3);
-			rs1.next();
-			String units = rs1.getString(1);
-			System.out.println(units);
-			
-			int totunits = Integer.valueOf(units);
-			System.out.println(totunits);
-			
-			
-			// create a prepared statement
-			//String query = " insert into monitoring('monitoring_ID', 'pay_ID', 'power_consumption_ID', 'month', 'units', 'comment') VALUES (?, ?, ?, ?, ?, ?, ?)";
-			String query = " insert into monitoring(monitoring_ID, pay_ID, power_consumption_ID, month, units, balance, comment) VALUES (?, ?, ?, ?, ?, ?, ?)";
-			
-			PreparedStatement preparedStmt = con.prepareStatement(query);
-			// binding values
-			preparedStmt.setInt(1, 0);
-			preparedStmt.setInt(2, Integer.parseInt(pay_ID));
-			preparedStmt.setInt(3, Integer.parseInt(power_consumption_ID));
-			preparedStmt.setString(4, month);
-			//preparedStmt.setInt(5, 678);
-			preparedStmt.setInt(5, totunits);
-			//preparedStmt.setDouble(6, 569);
-			preparedStmt.setDouble(6, totbalance);
-			preparedStmt.setString(7, comment);
-			
-			
-			//Double balance1 = parseDouble(preparedStmt.setString(6, query2));
-			
-					
-			
-//			double  tot_amount;
-//			tot_amount = (Integer.valueOf(monthly_units) * Integer.valueOf(rate));
-//			preparedStmt.setDouble(9, tot_amount);
-			
-			//String query = "select bill_ID, power_consumption_ID, User_Name, NIC, address, b.month, monthly_units, rate, amount 
-			//from billing b, consumption c 
-			//WHERE b.power_consumption_ID = c.conID AND c.userID ='"+userID+"' ";
-			
-			// execute the statement
-			preparedStmt.execute();
-			con.close();
-			output = "Inserted Overall Monitoring record successfully";
-			
-		}catch (Exception e){
-			output = "Error while inserting the Overall Monitoring.";
-			System.err.println(e.getMessage());
-		}
-			
-		return output;
+		public String insertOverallMonitoring(String pay_ID, String power_consumption_ID, String month, String comment){
+			String output = "";
 		
-	}
+			try{
 
+				Connection con = dbConnect.connectRoot();
+				if (con == null){
+					return "Error while connecting to the database for inserting."; 	
+				}
+				
+				//double query2 = Double.valueOf("SELECT SUM(balance) FROM payment WHERE month='"+month+"'");
+				String query2 = "SELECT SUM(balance) as totalBalance FROM payment WHERE month='"+month+"'";
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query2);
+				rs.next();
+				String balance = rs.getString(1);
+				//System.out.println("hi1");
+				//System.out.println(balance);
+				
+				//String balance = rs.getString("totalBalance");
+				
+				double totbalance = Double.valueOf(balance);
+				//System.out.println(totbalance);
+				
+				//int query3 = Integer. valueOf("SELECT SUM(units) FROM consumption WHERE month='"+month+"'");
+				String query3 = "SELECT SUM(conUnits) as totalUnits FROM consumption WHERE month='"+month+"'";
+				Statement stmt1 = con.createStatement();
+				ResultSet rs1 = stmt1.executeQuery(query3);
+				rs1.next();
+				String units = rs1.getString(1);
+				//System.out.println(units);
+				//System.out.println("hi2");
+				
+				int totunits = Integer.valueOf(units);
+				//System.out.println(totunits);
+				
+				
+				
+				// create a prepared statement
+				//String query = " insert into monitoring('monitoring_ID', 'pay_ID', 'power_consumption_ID', 'month', 'units', 'comment') VALUES (?, ?, ?, ?, ?, ?, ?)";
+				String query = "insert into monitoring(monitoring_ID, pay_ID, power_consumption_ID, month, units, balance, comment) VALUES (?, ?, ?, ?, ?, ?, ?)";
+				
+				PreparedStatement preparedStmt = con.prepareStatement(query);
+				// binding values
+				preparedStmt.setInt(1, 16);
+				preparedStmt.setInt(2, Integer.parseInt(pay_ID));
+				//preparedStmt.setInt(2, 1);
+				preparedStmt.setInt(3, Integer.parseInt(power_consumption_ID));
+				//preparedStmt.setInt(3, 6);
+				preparedStmt.setString(4, month);
+				//preparedStmt.setString(4, "Aug-2022");
+				
+				preparedStmt.setInt(5, totunits);
+				//preparedStmt.setInt(5, 234);
+				
+				preparedStmt.setDouble(6, totbalance);
+				//preparedStmt.setDouble(6, 234);
+				preparedStmt.setString(7, comment);
+				//preparedStmt.setString(7, "comment");
+				
+						
+				
+//				double  tot_amount;
+//				tot_amount = (Integer.valueOf(monthly_units) * Integer.valueOf(rate));
+//				preparedStmt.setDouble(9, tot_amount);
+				
+				//String query = "select bill_ID, power_consumption_ID, User_Name, NIC, address, b.month, monthly_units, rate, amount 
+				//from billing b, consumption c 
+				//WHERE b.power_consumption_ID = c.conID AND c.userID ='"+userID+"' ";
+				
+				// execute the statement
+				preparedStmt.execute();
+				con.close();
+				output = "Inserted Overall Monitoring record successfully";
+				
+			}catch (Exception e){
+				output = "Error while inserting the Overall Monitoring.";
+				System.err.println(e.getMessage());
+			}
+				
+			return output;
+			
+		}
+		
 	//read
 	public String readOverallMonitoring(){
 		String output = "";
@@ -205,7 +211,7 @@ public class OverallMonitoringResource {
 			preparedStmt.execute();
 
 			con.close();
-			output = "Deleted the monitoring record successfully";
+			output = "Deleted Monitoring Service successfully!";
 		}catch (Exception e){
 			output = "Error while deleting the monitoring record.";
 			System.err.println(e.getMessage());

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
             
     
-    <wb-module deploy-name="ConsumptionMonitoringService-0.0.1-SNAPSHOT">
+    <wb-module deploy-name="ElectroGrid-0.0.1-SNAPSHOT">
                         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
@@ -16,7 +16,7 @@
                         
         
         <property name="java-output-path" value="/ConsumptionMonitoringService/build/classes"/>
-        <property name="context-root" value="ConsumptionMonitoringService"/>
+        <property name="context-root" value="ElectroGrid"/>
                     
     
     </wb-module>
