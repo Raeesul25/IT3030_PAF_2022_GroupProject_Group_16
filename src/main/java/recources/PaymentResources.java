@@ -83,7 +83,6 @@ public class PaymentResources {
 						output = "Error while reading the items.";
 						System.err.println(e.getMessage());	
 					}
-						
 					return output;
 					
 				}
@@ -241,7 +240,7 @@ public class PaymentResources {
 						ResultSet rs = stmt.executeQuery(q2);
 						
 						//check whether a payment record already exited to the given bill id
-						if(rs.next() == false) {
+						if(!rs.next()) {//There is no record can be found in the payment table for the given Bill ID
 
 							// binding values for payment table
 							preparedStmt.setDouble(5, paid_amount);
@@ -251,12 +250,11 @@ public class PaymentResources {
 							preparedStmt.setDouble(6, balance);
 							
 							
-							
 						}
-						else{//if the payment is doing for a new bill which has not done any payment
+						else{//There is/are record can be found in the payment table for the given Bill ID
 						double pamount = Double.parseDouble(rs.getString(1))+paid_amount;
 						double pbalance = pamount - Double.parseDouble(total_amount);
-		
+						// binding values for payment table
 						preparedStmt.setDouble(5, pamount);
 						preparedStmt.setDouble(6, pbalance);
 						
@@ -357,7 +355,7 @@ public class PaymentResources {
 					ResultSet rs = stmt.executeQuery(q2);
 					
 					//check whether a payment record has happened before to the given bill id
-					if(rs.next() == true) {
+					if(rs.next()) {
 						// get balance of the given bill
 						double balance =   Double.parseDouble(rs.getString(1));
 						
@@ -370,7 +368,7 @@ public class PaymentResources {
 							preparedStmt.execute(query);
 			
 							con.close();
-							output = "Payment records of "+ bill_ID +" Deleted successfully";
+							output = "Payment records of Bill ID "+ bill_ID +" Deleted successfully";
 							//Successful message when deleting payment row
 						}
 						else
@@ -383,7 +381,7 @@ public class PaymentResources {
 					
 				}catch (Exception e){
 					output = "Error while deleting the payment record.";
-					System.err.println(e.getMessage());
+					System.out.println(e.getMessage());
 				}
 				
 				return output;
