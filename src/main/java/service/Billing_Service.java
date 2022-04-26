@@ -24,6 +24,8 @@ public class Billing_Service {
 	//Consumption API type object
 	Billing_Resource objectBill = new Billing_Resource();
 	
+	
+	// View all bills of all users
 	@GET
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
@@ -32,22 +34,26 @@ public class Billing_Service {
 		return objectBill.viewAllBills();
 	}
 	
-	// View single bill
+	
+	// View single user's bills
 	
 	@GET
 	@Path("{userID}")
 	@Produces(MediaType.TEXT_HTML)
+	
 	public String viewBill(@PathParam("userID") String userID)
 	{
 		return objectBill.viewBill(userID);
 	}
 	
 
+	// Insert bill
 	
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
+	
 	public String insertBill(@FormParam("power_consumption_ID") String power_consumption_ID, 
 			@FormParam("User_Name") String User_Name,@FormParam("NIC") String NIC, @FormParam("address") String address, @FormParam("month") String month, @FormParam("monthly_units") String monthly_units, 
 			@FormParam("rate") String rate){
@@ -57,11 +63,13 @@ public class Billing_Service {
 		return output;
 	}
 	
+	// Update bill
 	
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
+	
 	public String updateBill(String billData){
 		
 		//Convert the input string to a JSON object
@@ -78,7 +86,7 @@ public class Billing_Service {
 	}
 	
 	
-	//   "/{name}"
+	//  Delete
 	@DELETE
 	@Path("{bill_ID}")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -89,4 +97,4 @@ public class Billing_Service {
 	
 
 	
-}
+}// end of class

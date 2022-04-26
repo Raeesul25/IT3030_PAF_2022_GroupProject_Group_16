@@ -30,6 +30,8 @@ public class Billing_Resource {
 			if (con == null){
 				return "Error while connecting to the database for reading."; 	
 			}
+			
+			
 			// Prepare the html table to be displayed
 			output = "<table border='1'><tr><th>Bill ID</th><th>Consumption ID</th><th>User Name</th>" +
 			"<th>NIC</th>" +
@@ -86,7 +88,7 @@ public class Billing_Resource {
 	}
 	
 	
-	// Retrieve SINGLE USER BILL
+	// Retrieve SINGLE USER BILLS
 	
 	public String viewBill(String userID)
 	{
@@ -94,11 +96,12 @@ public class Billing_Resource {
 		try
 		{
 			Connection con = dbConnect.connectRoot();
+			
 			if (con == null)
 			{
 				return "Error while connecting to the database for reading.";
 			}
-			
+						
 			// Displaying the read concepts
 			output = "<table border='1'><tr><th>Bill ID</th><th>Consumption ID</th><th>User Name</th>" +
 					"<th>NIC</th>" +
@@ -110,7 +113,7 @@ public class Billing_Resource {
 			String query = "select bill_ID, power_consumption_ID, User_Name, NIC, address, b.month, monthly_units, rate, amount  from billing b, consumption c WHERE b.power_consumption_ID = c.conID AND c.userID ='"+userID+"' ";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			
+			int count = 0;
 			
 			// iterate through the rows in the result set
 			while (rs.next())
@@ -125,6 +128,8 @@ public class Billing_Resource {
 				String rate = Integer.toString(rs.getInt("rate"));
 				String amount = Double.toString(rs.getDouble("amount"));
 			
+				count++;			
+				
 				// Add into the html table
 				output += "<tr><td>" + bill_ID + "</td>";
 				output += "<td>" + power_consumption_ID + "</td>";
@@ -149,6 +154,13 @@ public class Billing_Resource {
 				
 				// Completion of the HTML table
 				output += "</table>";
+				
+				// if user is not in database
+				if (count == 0)
+				{
+					return "User does NOT exist.";
+				}
+				
 			}
 			catch (Exception e)
 			{
@@ -168,13 +180,18 @@ public class Billing_Resource {
 		try{
 
 			Connection con = dbConnect.connectRoot();
+			
 			if (con == null){
 				return "Error while connecting to the database for inserting."; 	
 			}
+			
+			
 			// create a prepared statement
 			String query = " insert into billing(bill_ID, power_consumption_ID, User_Name, NIC, address, month, monthly_units, rate, amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
 			PreparedStatement preparedStmt = con.prepareStatement(query);
+			
+			
 			// binding values
 			preparedStmt.setInt(1, 0);
 			preparedStmt.setInt(2, Integer.parseInt(power_consumption_ID));
@@ -210,28 +227,45 @@ public class Billing_Resource {
 	
 	public String updateBill(String bill_ID, String rate) {
 		
+		//boolean rs = false;
 		String output = "";
+		
 		try{
 			
 			Connection con = dbConnect.connectRoot();
+			
 			if (con == null){
 				return "Error while connecting to the database for updating."; 	
 			}
 		
 			// create a prepared statement
-			String query = "UPDATE electrogrid.billing SET rate=? WHERE bill_ID=?";
+			String query = "UPDATE electrogrid.billing SET rate=?, amount=? WHERE bill_ID=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 		
+			/*
+			String query2 = "select monthly_units  from billing WHERE bill_ID ='"+bill_ID+"' ";
+			Statement stmt = con.createStatement();
+			ResultSet rs2 = stmt.executeQuery(query2);
+			String monthly_units = Integer.toString(rs2.getInt("monthly_units"));
+			
+			double  tot_amount;
+			tot_amount = (Integer.valueOf(monthly_units) * Integer.valueOf(rate));
+			preparedStmt.setDouble(2, tot_amount);
+		
+			preparedStmt.setInt(3, Integer.parseInt(bill_ID));
+			
+			*/
+			
 			// binding values
 			preparedStmt.setInt(1, Integer.parseInt(rate));			
 			preparedStmt.setInt(2, Integer.parseInt(bill_ID));
 			
-		
 			// execute the statement
 			preparedStmt.execute();
-		
+			
 			con.close();
 			output = "Bill Record updated successfully";
+		
 		
 		}catch (Exception e){
 			output = "Error while updating the Bill Record.";
@@ -245,13 +279,18 @@ public class Billing_Resource {
 	// DELETE
 	
 	public String deleteBill(String bill_ID){
+		
 		String output = "";
+		
 		try{
 			
 			Connection con = dbConnect.connectRoot();
+			
 			if (con == null){
 				return "Error while connecting to the database for deleting."; 	
 			}
+			
+			
 			// create a prepared statement
 			String query = "DELETE FROM billing WHERE bill_ID=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
@@ -264,7 +303,9 @@ public class Billing_Resource {
 
 			con.close();
 			output = "Bill Record deleted successfully";
+			
 		}catch (Exception e){
+			
 			output = "Error while deleting the Bill Record.";
 			System.err.println(e.getMessage());
 		}
